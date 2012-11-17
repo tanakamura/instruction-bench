@@ -1,2 +1,3 @@
- $ nmake 
- $ bench.exe
+` $ nmake`
+
+` $ bench.exe`
