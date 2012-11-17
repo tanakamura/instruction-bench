@@ -8,6 +8,7 @@ lambda‚É‘Î‰‚µ‚½ VC ‚Ì x64 ”Å‚ª‚¢‚è‚Ü‚·B(‘½•ª2010‚Æ2012)
 
 
 i7-3770 ‚Ì—á
+<pre>
 <code>
     == latency/throughput ==
        reg64:       add:   latency: CPI=    0.89, IPC=    1.12
@@ -63,3 +64,4 @@ i7-3770 ‚Ì—á
         m256:vperm2f128:   latency: CPI=    1.74, IPC=    0.57
         m256:vperm2f128:throughput: CPI=    1.16, IPC=    0.86
 </code>
+</pre>
