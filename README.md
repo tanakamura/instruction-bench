@@ -1,0 +1,2 @@
+ $ nmake 
+ $ bench.exe
