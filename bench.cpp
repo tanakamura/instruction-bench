@@ -1,4 +1,5 @@
 #include <xbyak.h>
+#include <immintrin.h>
 
 /* x64 regisuter usage
  *  http://msdn.microsoft.com/en-US/library/9z1stfyw(v=vs.80).aspx
@@ -407,7 +408,7 @@ main(int argc, char **argv)
 
     GEN(Xmm, "xorps", (g->xorps(dst, src)), false, OT_FP32);
     GEN(Xmm, "addps", (g->addps(dst, src)), false, OT_FP32);
-    GEN(Xmm, "mulps", (g->mulps(dst, src)), false, OT_FP32);
+    GEN(Xmm, "mulps", (g->mulps(dst, src)), true, OT_FP32);
     GEN(Xmm, "blendps", (g->blendps(dst, src, 0)), false, OT_FP32);
     GEN(Xmm, "pshufb", (g->pshufb(dst, src)), false, OT_INT);
     GEN(Xmm, "pmullw", (g->pmullw(dst, src)), false, OT_INT);
@@ -424,7 +425,7 @@ main(int argc, char **argv)
                 false, OT_FP32);
 
     GEN(Ymm, "xorps", (g->vxorps(dst, dst, src)), false, OT_FP32);
-    GEN(Ymm, "mulps", (g->vmulps(dst, dst, src)), false, OT_FP32);
+    GEN(Ymm, "mulps", (g->vmulps(dst, dst, src)), true, OT_FP32);
     GEN(Ymm, "addps", (g->vaddps(dst, dst, src)), false, OT_FP32);
     GEN(Ymm, "divps", (g->vdivps(dst, dst, src)), false, OT_FP32);
     GEN(Ymm, "divpd", (g->vdivpd(dst, dst, src)), false, OT_FP64);
@@ -432,4 +433,34 @@ main(int argc, char **argv)
     GEN(Ymm, "rcpps", (g->vrcpps(dst, dst)), false, OT_FP32);
     GEN(Ymm, "sqrtps", (g->vsqrtps(dst, dst)), false, OT_FP32);
     GEN(Ymm, "vperm2f128", (g->vperm2f128(dst,dst,src,0)), false, OT_FP32);
+    {
+        int reg[4];
+        bool have_avx2 = false;
+        bool have_fma = false;
+
+        __cpuidex(reg, 7, 0);
+
+        if (reg[1] & (1<<5)) {
+            have_avx2 = true;
+        }
+
+        __cpuid(reg, 1);
+
+        if (reg[2] & (1<<12)) {
+            have_fma = true;
+        }
+
+
+        if (have_avx2) {
+            GEN(Ymm, "pxor", (g->vpxor(dst, dst, src)), false, OT_INT);
+            GEN(Ymm, "paddd", (g->vpaddd(dst, dst, src)), false, OT_INT);
+            GEN(Ymm, "vpermps", (g->vpermps(dst, dst, src)), false, OT_FP32);
+            GEN(Ymm, "vpermpd", (g->vpermpd(dst, dst, 0)), false, OT_FP64);
+        }
+
+        if (have_fma) {
+            GEN(Ymm, "vfmaps", (g->vfmadd132ps(dst, src, src)), true, OT_FP32);
+            GEN(Ymm, "vfmapd", (g->vfmadd132pd(dst, src, src)), true, OT_FP64);
+        }
+    }
 }
