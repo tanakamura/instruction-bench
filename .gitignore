@@ -1,2 +1,6 @@
 *~
 *.exe
+bench.asm
+*.ilk
+*.obj
+*.pdb
