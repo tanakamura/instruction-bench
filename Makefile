@@ -1,4 +1,6 @@
 bench:
-	cl /EHsc /MT /Zi /Ixbyak /Fa /O2 bench.cpp /link /DYNAMICBASE:NO
+	-cl /EHsc /MT /Zi /Ixbyak /Fa /O2 bench.cpp /link /DYNAMICBASE:NO
+	-g++ -DXBYAK_NO_OP_NAMES -std=c++0x -O2 -Ixbyak -o bench bench.cpp 
+
 clean:
-	del *~ bench.exe test.exe *.obj *.pdb *.ilk *.suo *.bin
+	del *~ bench.exe test.exe *.obj *.pdb *.ilk *.suo *.bin *.o bench

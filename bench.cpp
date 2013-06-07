@@ -1,5 +1,7 @@
 #include <xbyak.h>
 #include <immintrin.h>
+#include <x86intrin.h>
+#include <cpuid.h>
 
 /* x64 regisuter usage
  *  http://msdn.microsoft.com/en-US/library/9z1stfyw(v=vs.80).aspx
@@ -23,7 +25,7 @@
  * XMM6:XMM15   Nonvolatile           Must be preserved as needed by callee.
  */
 
-char __declspec(align(32)) zero_mem[4096*8];
+char MIE_ALIGN(64) zero_mem[4096*8];
 
 enum lt_op {
     LT_LATENCY,
@@ -174,7 +176,7 @@ struct RegMap<Xbyak::Reg64>
     }
 
     void killdep(Xbyak::CodeGenerator *g, Xbyak::Reg64 r, enum operand_type) {
-        g->xor(r, r);
+        g->xor_(r, r);
     }
 
 };
@@ -189,7 +191,7 @@ struct Gen
 
         push(rbp);
         mov(rbp, rsp);
-        and(rsp, -(__int64)32);
+        and_(rsp, -(Xbyak::sint64)32);
         sub(rsp, 32 * 9);
 
         rm.save(this, rm.v8,  -32*8, ot);
@@ -213,7 +215,7 @@ struct Gen
         mov(rcx, num_loop);
         mov(rdx, (intptr_t)zero_mem);
         mov(ptr[rsp], rdi);
-        xor(rdi, rdi);
+        xor_(rdi, rdi);
 
         L("@@");
 
@@ -336,9 +338,9 @@ lt(const char *name,
 
     exec();
 
-    __int64 b = __rdtsc();
+    Xbyak::sint64 b = __rdtsc();
     exec();
-    __int64 e = __rdtsc();
+    Xbyak::sint64 e = __rdtsc();
 
     printf("%8s:%10s:%10s: CPI=%8.2f, IPC=%8.2f\n",
            RegMap<RegType>().name,
@@ -438,14 +440,21 @@ main(int argc, char **argv)
         bool have_avx2 = false;
         bool have_fma = false;
 
+#ifdef _WIN32
         __cpuidex(reg, 7, 0);
+#else
+        __cpuid_count(7, 0, reg[0], reg[1], reg[2], reg[3]);
+#endif
 
         if (reg[1] & (1<<5)) {
             have_avx2 = true;
         }
 
+#ifdef _WIN32
         __cpuid(reg, 1);
-
+#else
+        __cpuid(1, reg[0], reg[1], reg[2], reg[3]);
+#endif
         if (reg[2] & (1<<12)) {
             have_fma = true;
         }
