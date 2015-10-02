@@ -2,6 +2,7 @@
 #include <immintrin.h>
 #include <x86intrin.h>
 #include <cpuid.h>
+#include <string.h>
 
 /* x64 regisuter usage
  *  http://msdn.microsoft.com/en-US/library/9z1stfyw(v=vs.80).aspx
@@ -24,6 +25,65 @@
  * XMM4:XMM5    Volatile              Must be preserved as needed by caller
  * XMM6:XMM15   Nonvolatile           Must be preserved as needed by callee.
  */
+
+#ifdef __linux
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/syscall.h>
+#include <linux/perf_event.h>
+#include <asm/unistd.h>
+#include <sys/eventfd.h>
+
+static int
+perf_event_open(struct perf_event_attr *hw_event, pid_t pid,
+                int cpu, int group_fd, unsigned long flags )
+{
+    int ret;
+
+    ret = syscall( __NR_perf_event_open, hw_event, pid, cpu,
+                   group_fd, flags );
+    return ret;
+}
+
+int perf_fd;
+
+static void
+cycle_counter_init(void)
+{
+    struct perf_event_attr attr;
+    memset(&attr, 0, sizeof(attr));
+
+    attr.type = PERF_TYPE_HARDWARE;
+    attr.size = sizeof(attr);
+    attr.config = PERF_COUNT_HW_CPU_CYCLES;
+
+    perf_fd = perf_event_open(&attr, 0, -1, -1, 0);
+    if (perf_fd == -1) {
+        perror("perf_event_open");
+        exit(1);
+    }
+}
+
+static long long
+read_cycle(void)
+{
+    long long val;
+    ssize_t sz = read(perf_fd, &val, sizeof(val));
+    if (sz != sizeof(val)) {
+        perror("read");
+        exit(1);
+    }
+
+    return val;
+}
+
+#else
+
+#define cycle_counter_init() ((void)0)
+#define read_cycle() __rdtsc()
+
+#endif
+
 
 char MIE_ALIGN(64) zero_mem[4096*8];
 
@@ -338,9 +398,9 @@ lt(const char *name,
 
     exec();
 
-    Xbyak::sint64 b = __rdtsc();
+    long long b = read_cycle();
     exec();
-    Xbyak::sint64 e = __rdtsc();
+    long long e = read_cycle();
 
     printf("%8s:%10s:%10s: CPI=%8.2f, IPC=%8.2f\n",
            RegMap<RegType>().name,
@@ -393,10 +453,11 @@ run_latency(const char *name, F_t f_t, F_l f_l, bool kill_dep, enum operand_type
 int
 main(int argc, char **argv)
 {
+    cycle_counter_init();
+
     printf("== latency/throughput ==\n");
     GEN(Reg64, "add", (g->add(dst, src)), false, OT_INT);
     GEN(Reg64, "load", (g->mov(dst, g->ptr[src + g->rdx])), false, OT_INT);
-
 
     GEN(Xmm, "pxor", (g->pxor(dst, src)), false, OT_INT);
     GEN(Xmm, "padd", (g->paddd(dst, src)), false, OT_INT);
