@@ -1,15 +1,17 @@
 #include <xbyak.h>
 #include <stdio.h>
 
+char data[4096];
+
 struct G
   :public Xbyak::CodeGenerator
 {
   G() {
-    vpaddd(ymm0, ymm1, ymm2);
-    vpxor(ymm0, ymm1, ymm2);
-    vpermd(ymm0, ymm1, ymm2);
-    vpermps(ymm0, ymm1, ymm2);
-    vpermpd(ymm0, ymm1, 0);
+    bndmk(bnd0, ptr[r10*4+4]);
+    bndmov(bnd0, ptr[r10*4+4]);
+    bndmov(ptr[r10*4+4], bnd0);
+    bndldx(bnd0, ptr[r10*4+4]);
+    bndstx(ptr[r10*4+4], bnd0);
   }
 };
 

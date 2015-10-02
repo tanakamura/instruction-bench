@@ -86,6 +86,7 @@ read_cycle(void)
 
 
 char MIE_ALIGN(64) zero_mem[4096*8];
+char MIE_ALIGN(64) data_mem[4096*8];
 
 enum lt_op {
     LT_LATENCY,
@@ -396,6 +397,8 @@ lt(const char *name,
     typedef void (*func_t)(void);
     func_t exec = (func_t)g.getCode();
 
+    memset(zero_mem, 0, sizeof(zero_mem));
+    memset(data_mem, ~0, sizeof(data_mem));
     exec();
 
     long long b = read_cycle();
@@ -407,6 +410,16 @@ lt(const char *name,
            name, on,
            (e-b)/(double)(num_insn * num_loop), 
            (num_insn * num_loop)/(double)(e-b));
+
+    if (1) {
+        char *p = (char*)g.getCode();
+        int sz = g.getSize();
+        FILE *fp = fopen("out.bin", "wb");
+        for (int i=0; i<sz; i++) {
+            fputc(p[i], fp);
+        }
+        fclose(fp);
+    }
 }           
 
 #define NUM_LOOP (16384*8)
@@ -435,6 +448,17 @@ run_latency(const char *name, F_t f_t, F_l f_l, bool kill_dep, enum operand_type
     }
 }
 
+template <typename RegType, typename F_t>
+void
+run_throghput_only(const char *name, F_t f_t,bool kill_dep, enum operand_type ot)
+{
+    if (kill_dep) {
+        lt<RegType>(name, "throughput", f_t, NUM_LOOP, 16, LT_THROUGHPUT_KILLDEP, ot);
+    } else {
+        lt<RegType>(name, "throughput", f_t, NUM_LOOP, 16, LT_THROUGHPUT, ot);
+    }
+}
+
 #define GEN(rt, name, expr, kd, ot)                                     \
     run<Xbyak::rt>(                                                     \
     name,                                                               \
@@ -448,6 +472,12 @@ run_latency(const char *name, F_t f_t, F_l f_l, bool kill_dep, enum operand_type
     [](Xbyak::CodeGenerator *g, Xbyak::rt dst, Xbyak::rt src){expr_t;}, \
     [](Xbyak::CodeGenerator *g, Xbyak::rt dst, Xbyak::rt src){expr_l;}, \
     kd, ot);
+
+#define GEN_throughput_only(rt, name, expr_t, kd, ot)                   \
+    run_throghput_only<Xbyak::rt>(                                      \
+    name,                                                               \
+    [](Xbyak::CodeGenerator *g, Xbyak::rt dst, Xbyak::rt src){expr_t;}, \
+    kd, ot);
         
 
 int
@@ -457,6 +487,7 @@ main(int argc, char **argv)
 
     printf("== latency/throughput ==\n");
     GEN(Reg64, "add", (g->add(dst, src)), false, OT_INT);
+    GEN(Reg64, "lea", (g->lea(dst, g->ptr[src])), false, OT_INT);
     GEN(Reg64, "load", (g->mov(dst, g->ptr[src + g->rdx])), false, OT_INT);
 
     GEN(Xmm, "pxor", (g->pxor(dst, src)), false, OT_INT);
@@ -472,6 +503,10 @@ main(int argc, char **argv)
     GEN(Xmm, "xorps", (g->xorps(dst, src)), false, OT_FP32);
     GEN(Xmm, "addps", (g->addps(dst, src)), false, OT_FP32);
     GEN(Xmm, "mulps", (g->mulps(dst, src)), true, OT_FP32);
+    GEN(Xmm, "divps", (g->vdivps(dst, dst, src)), false, OT_FP32);
+    GEN(Xmm, "divpd", (g->vdivpd(dst, dst, src)), false, OT_FP64);
+    GEN(Xmm, "rsqrtps", (g->vrsqrtps(dst, dst)), false, OT_FP32);
+    GEN(Ymm, "rcpps", (g->vrcpps(dst, dst)), false, OT_FP32);
     GEN(Xmm, "blendps", (g->blendps(dst, src, 0)), false, OT_FP32);
     GEN(Xmm, "pshufb", (g->pshufb(dst, src)), false, OT_INT);
     GEN(Xmm, "pmullw", (g->pmullw(dst, src)), false, OT_INT);
@@ -533,4 +568,24 @@ main(int argc, char **argv)
             GEN(Ymm, "vfmapd", (g->vfmadd132pd(dst, src, src)), true, OT_FP64);
         }
     }
+
+    /* MPX */
+    GEN_throughput_only(Reg64, "bndcu",
+                        (g->bndcu(g->bnd0, g->rax)),
+                        false, OT_INT);
+    GEN_throughput_only(Reg64, "bndmk",
+                        (g->bndmk(g->bnd0, g->ptr[g->rax*4+100])),
+                        false, OT_INT);
+    GEN_throughput_only(Reg64, "bndmov(st)",
+                        (g->bndmov(g->ptr[data_mem], g->bnd0)),
+                        false, OT_INT);
+    GEN_throughput_only(Reg64, "bndmov(ld)",
+                        (g->bndmov(g->bnd0, g->ptr[data_mem])),
+                        false, OT_INT);
+    GEN_throughput_only(Reg64, "bndldx",
+                        (g->bndldx(g->bnd0, g->ptr[g->rdx])),
+                        false, OT_INT);
+    GEN_throughput_only(Reg64, "bndstx",
+                        (g->bndstx(g->ptr[g->rdx], g->bnd0)),
+                        false, OT_INT);
 }
