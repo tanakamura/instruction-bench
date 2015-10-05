@@ -569,6 +569,7 @@ main(int argc, char **argv)
         }
     }
 
+#ifdef ENABLE_MPX
     /* MPX */
     GEN_throughput_only(Reg64, "bndcu",
                         (g->bndcu(g->bnd0, g->rax)),
@@ -588,4 +589,5 @@ main(int argc, char **argv)
     GEN_throughput_only(Reg64, "bndstx",
                         (g->bndstx(g->ptr[g->rdx], g->bnd0)),
                         false, OT_INT);
+#endif
 }
