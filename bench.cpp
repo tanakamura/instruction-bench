@@ -86,9 +86,8 @@ read_cycle(void)
 
 #endif
 
-
-char MIE_ALIGN(64) zero_mem[4096*8];
-char MIE_ALIGN(64) data_mem[4096*8];
+char MIE_ALIGN(2048*1024) zero_mem[4096*1024];
+char MIE_ALIGN(2048*1024) data_mem[4096*1024];
 
 enum lt_op {
     LT_LATENCY,
@@ -400,7 +399,7 @@ lt(const char *name,
     typedef void (*func_t)(void);
     func_t exec = (func_t)g.getCode();
 
-    if (0) {
+    if (1) {
         char *p = (char*)g.getCode();
         int sz = g.getSize();
         FILE *fp = fopen("out.bin", "wb");
@@ -425,7 +424,7 @@ lt(const char *name,
                (e-b)/(double)(num_insn * num_loop), 
                (num_insn * num_loop)/(double)(e-b));
     } else {
-        printf("%8s:%28s:%10s: CPI=%8.2f, IPC=%8.2f\n",
+        printf("%8s:%40s:%10s: CPI=%8.2f, IPC=%8.2f\n",
                RegMap<RegType>().name,
                name, on,
                (e-b)/(double)(num_insn * num_loop), 
@@ -518,6 +517,23 @@ main(int argc, char **argv)
 
     cycle_counter_init();
 
+#ifdef _WIN32
+#define x_cpuid(p,eax) __cpuid(p, eax)
+    typedef int cpuid_t;
+#else
+#define x_cpuid(p,eax) __get_cpuid(eax, &(p)[0], &(p)[1], &(p)[2], &(p)[3]);
+    typedef unsigned int cpuid_t;
+#endif
+
+    {
+        cpuid_t data[4*3+1];
+        x_cpuid(data+4*0, 0x80000002);
+        x_cpuid(data+4*1, 0x80000003);
+        x_cpuid(data+4*2, 0x80000004);
+        data[12] = 0;
+        puts((char*)data);
+    }
+
     if (!output_csv) {
         printf("== latency/throughput ==\n");
     }
@@ -546,6 +562,7 @@ main(int argc, char **argv)
     GEN(Xmm, "pshufb", (g->pshufb(dst, src)), false, OT_INT);
     GEN(Xmm, "pmullw", (g->pmullw(dst, src)), false, OT_INT);
     GEN(Xmm, "phaddd", (g->phaddd(dst, src)), false, OT_INT);
+    GEN(Xmm, "haddps", (g->phaddd(dst, src)), false, OT_FP32);
 
     GEN_throughput_only(Xmm, "pinsrd", (g->pinsrb(dst, g->edx, 0)), false, OT_INT);
     GEN_latency_only(Xmm, "pinsrd->pexr", (g->pinsrb(dst, g->edx, 0));(g->vpextrd(g->edx,dst,0)), false, OT_INT);
@@ -553,9 +570,24 @@ main(int argc, char **argv)
     GEN(Xmm, "cvtps2dq", (g->cvtps2dq(dst, src)), false, OT_FP32);
 
     /* 256 */
-    GEN_latency(Ymm, "loadps",
+    GEN_latency(Ymm, "movaps [mem]",
                 (g->vmovaps(dst, g->ptr[g->rdx])),
                 (g->vmovaps(dst, g->ptr[g->rdx + g->rdi])); (g->movq(g->rdi, dst)); ,
+                false, OT_FP32);
+
+    GEN_latency(Ymm, "vmovdqu [mem+1]",
+                (g->vmovdqu(dst, g->ptr[g->rdx + 1])),
+                (g->vmovdqu(dst, g->ptr[g->rdx + g->rdi + 1])); (g->movq(g->rdi, dst)); ,
+                false, OT_FP32);
+
+    GEN_latency(Ymm, "vmovdqu [mem+63] (cross cache)",
+                (g->vmovdqu(dst, g->ptr[g->rdx + 63])),
+                (g->vmovdqu(dst, g->ptr[g->rdx + g->rdi + 63])); (g->movq(g->rdi, dst)); ,
+                false, OT_FP32);
+
+    GEN_latency(Ymm, "vmovdqu [mem+2MB-1] (cross page)",
+                (g->vmovdqu(dst, g->ptr[g->rdx + (2048*1024-1)])),
+                (g->vmovdqu(dst, g->ptr[g->rdx + g->rdi + (2048*1024-1)])); (g->movq(g->rdi, dst)); ,
                 false, OT_FP32);
 
     GEN(Ymm, "xorps", (g->vxorps(dst, dst, src)), false, OT_FP32);
