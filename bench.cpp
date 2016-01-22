@@ -600,7 +600,7 @@ main(int argc, char **argv)
 
             GEN_latency(Ymm, "vpgatherdd",
                         (g->vpgatherdd(g->ymm2, g->ptr[g->rdx + g->ymm0*1], g->ymm1)),
-                        (g->vpgatherdd(g->ymm2, g->ptr[g->rdx + g->ymm0*1], g->ymm1)); (g->vmovaps(g->ymm0,g->ymm2)),
+                        (g->vpgatherdd(g->ymm2, g->ptr[g->rdx + g->ymm0*1], g->ymm1)); (g->vmovdqa(g->ymm0,g->ymm2)),
                         false, OT_INT);
 
             GEN_latency(Ymm, "gather(<ld+ins>x8 + perm)",
