@@ -4,6 +4,8 @@
 #include <cpuid.h>
 #include <string.h>
 
+static bool output_csv = false;
+
 /* x64 regisuter usage
  *  http://msdn.microsoft.com/en-US/library/9z1stfyw(v=vs.80).aspx
  * RAX          Volatile Return       value register
@@ -416,11 +418,19 @@ lt(const char *name,
     exec();
     long long e = read_cycle();
 
-    printf("%8s:%10s:%10s: CPI=%8.2f, IPC=%8.2f\n",
-           RegMap<RegType>().name,
-           name, on,
-           (e-b)/(double)(num_insn * num_loop), 
-           (num_insn * num_loop)/(double)(e-b));
+    if (output_csv) {
+        printf("%s,%s,%s,%e,%e\n",
+               RegMap<RegType>().name,
+               name, on,
+               (e-b)/(double)(num_insn * num_loop), 
+               (num_insn * num_loop)/(double)(e-b));
+    } else {
+        printf("%8s:%28s:%10s: CPI=%8.2f, IPC=%8.2f\n",
+               RegMap<RegType>().name,
+               name, on,
+               (e-b)/(double)(num_insn * num_loop), 
+               (num_insn * num_loop)/(double)(e-b));
+    }
 
 }           
 
@@ -450,6 +460,14 @@ run_latency(const char *name, F_t f_t, F_l f_l, bool kill_dep, enum operand_type
     }
 }
 
+template <typename RegType, typename F_l>
+void
+run_latency_only(const char *name, F_l f_l, bool kill_dep, enum operand_type ot)
+{
+    lt<RegType>(name, "latency", f_l, NUM_LOOP, 16, LT_LATENCY, ot);
+}
+
+
 template <typename RegType, typename F_t>
 void
 run_throghput_only(const char *name, F_t f_t,bool kill_dep, enum operand_type ot)
@@ -475,6 +493,13 @@ run_throghput_only(const char *name, F_t f_t,bool kill_dep, enum operand_type ot
     [](Xbyak::CodeGenerator *g, Xbyak::rt dst, Xbyak::rt src){expr_l;}, \
     kd, ot);
 
+
+#define GEN_latency_only(rt, name, expr_l, kd, ot)              \
+    run_latency_only<Xbyak::rt>(                                             \
+    name,                                                           \
+    [](Xbyak::CodeGenerator *g, Xbyak::rt dst, Xbyak::rt src){expr_l;}, \
+    kd, ot);
+
 #define GEN_throughput_only(rt, name, expr_t, kd, ot)                   \
     run_throghput_only<Xbyak::rt>(                                      \
     name,                                                               \
@@ -485,9 +510,17 @@ run_throghput_only(const char *name, F_t f_t,bool kill_dep, enum operand_type ot
 int
 main(int argc, char **argv)
 {
+    if (argc >= 2) {
+        if (strcmp(argv[1],"--csv") == 0) {
+            output_csv = true;
+        }
+    }
+
     cycle_counter_init();
 
-    printf("== latency/throughput ==\n");
+    if (!output_csv) {
+        printf("== latency/throughput ==\n");
+    }
     GEN(Reg64, "add", (g->add(dst, src)), false, OT_INT);
     GEN(Reg64, "lea", (g->lea(dst, g->ptr[src])), false, OT_INT);
     GEN(Reg64, "load", (g->mov(dst, g->ptr[src + g->rdx])), false, OT_INT);
@@ -514,7 +547,8 @@ main(int argc, char **argv)
     GEN(Xmm, "pmullw", (g->pmullw(dst, src)), false, OT_INT);
     GEN(Xmm, "phaddd", (g->phaddd(dst, src)), false, OT_INT);
 
-    GEN(Xmm, "pinsrd", (g->pinsrb(dst, g->edx, 0)), false, OT_INT);
+    GEN_throughput_only(Xmm, "pinsrd", (g->pinsrb(dst, g->edx, 0)), false, OT_INT);
+    GEN_latency_only(Xmm, "pinsrd->pexr", (g->pinsrb(dst, g->edx, 0));(g->vpextrd(g->edx,dst,0)), false, OT_INT);
     GEN(Xmm, "dpps", (g->dpps(dst, src, 0xff)), false, OT_FP32);
     GEN(Xmm, "cvtps2dq", (g->cvtps2dq(dst, src)), false, OT_FP32);
 
@@ -568,6 +602,33 @@ main(int argc, char **argv)
                         (g->vgatherdps(g->ymm2, g->ptr[g->rdx + g->ymm0*1], g->ymm1)),
                         (g->vgatherdps(g->ymm2, g->ptr[g->rdx + g->ymm0*1], g->ymm1)); (g->vmovaps(g->ymm0,g->ymm2)),
                         false, OT_FP32);
+
+            GEN_latency(Ymm, "gather(<ld+ins>x8 + perm)",
+
+                        /* throughput */
+                        (g->vmovd(g->xmm2, g->ptr[g->rdx]));
+                        (g->vmovd(g->xmm3, g->ptr[g->rdx]));
+                        (g->vpinsrd(g->xmm2, g->xmm2, g->ptr[g->rdx + 4], 0));
+                        (g->vpinsrd(g->xmm3, g->xmm3, g->ptr[g->rdx + 4], 0));
+                        (g->vpinsrd(g->xmm2, g->xmm2, g->ptr[g->rdx + 8], 0));
+                        (g->vpinsrd(g->xmm3, g->xmm3, g->ptr[g->rdx + 8], 0));
+                        (g->vpinsrd(g->xmm2, g->xmm2, g->ptr[g->rdx + 12], 0));
+                        (g->vpinsrd(g->xmm3, g->xmm3, g->ptr[g->rdx + 12], 0));
+                        (g->vperm2i128(g->ymm2,g->ymm2,g->ymm3,0));,
+
+                        /* latency */
+                        (g->vmovd(g->xmm2, g->ptr[g->rdx + g->rdi]));
+                        (g->vmovd(g->xmm3, g->ptr[g->rdx + g->rdi]));
+                        (g->vpinsrd(g->xmm2, g->xmm2, g->ptr[g->rdx + g->rdi + 4], 0));
+                        (g->vpinsrd(g->xmm3, g->xmm3, g->ptr[g->rdx + g->rdi + 4], 0));
+                        (g->vpinsrd(g->xmm2, g->xmm2, g->ptr[g->rdx + g->rdi + 8], 0));
+                        (g->vpinsrd(g->xmm3, g->xmm3, g->ptr[g->rdx + g->rdi + 8], 0));
+                        (g->vpinsrd(g->xmm2, g->xmm2, g->ptr[g->rdx + g->rdi + 12], 0));
+                        (g->vpinsrd(g->xmm3, g->xmm3, g->ptr[g->rdx + g->rdi + 12], 0));
+                        (g->vperm2i128(g->ymm2,g->ymm2,g->ymm3,0));
+                        (g->vmovd(g->edi, g->xmm2));
+
+                        ,false, OT_FP32);
         }
 
         if (have_fma) {
