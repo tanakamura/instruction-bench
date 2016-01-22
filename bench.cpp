@@ -567,7 +567,7 @@ main(int argc, char **argv)
             GEN_latency(Ymm, "vgatherdps",
                         (g->vgatherdps(g->ymm2, g->ptr[g->rdx + g->ymm0*1], g->ymm1)),
                         (g->vgatherdps(g->ymm2, g->ptr[g->rdx + g->ymm0*1], g->ymm1)); (g->vmovaps(g->ymm0,g->ymm2)),
-                        true, OT_FP32);
+                        false, OT_FP32);
         }
 
         if (have_fma) {
