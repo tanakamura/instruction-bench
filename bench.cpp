@@ -598,10 +598,10 @@ main(int argc, char **argv)
             GEN(Ymm, "vpermps", (g->vpermps(dst, dst, src)), false, OT_FP32);
             GEN(Ymm, "vpermpd", (g->vpermpd(dst, dst, 0)), false, OT_FP64);
 
-            GEN_latency(Ymm, "vgatherdps",
-                        (g->vgatherdps(g->ymm2, g->ptr[g->rdx + g->ymm0*1], g->ymm1)),
-                        (g->vgatherdps(g->ymm2, g->ptr[g->rdx + g->ymm0*1], g->ymm1)); (g->vmovaps(g->ymm0,g->ymm2)),
-                        false, OT_FP32);
+            GEN_latency(Ymm, "vpgatherdd",
+                        (g->vpgatherdd(g->ymm2, g->ptr[g->rdx + g->ymm0*1], g->ymm1)),
+                        (g->vpgatherdd(g->ymm2, g->ptr[g->rdx + g->ymm0*1], g->ymm1)); (g->vmovaps(g->ymm0,g->ymm2)),
+                        false, OT_INT);
 
             GEN_latency(Ymm, "gather(<ld+ins>x8 + perm)",
 
