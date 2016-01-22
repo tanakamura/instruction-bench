@@ -393,9 +393,20 @@ lt(const char *name,
    enum lt_op o,
    enum operand_type ot)
 {
+
     Gen<RegType,F> g(f, num_loop, num_insn, o, ot);
     typedef void (*func_t)(void);
     func_t exec = (func_t)g.getCode();
+
+    if (0) {
+        char *p = (char*)g.getCode();
+        int sz = g.getSize();
+        FILE *fp = fopen("out.bin", "wb");
+        for (int i=0; i<sz; i++) {
+            fputc(p[i], fp);
+        }
+        fclose(fp);
+    }
 
     memset(zero_mem, 0, sizeof(zero_mem));
     memset(data_mem, ~0, sizeof(data_mem));
@@ -411,15 +422,6 @@ lt(const char *name,
            (e-b)/(double)(num_insn * num_loop), 
            (num_insn * num_loop)/(double)(e-b));
 
-    if (1) {
-        char *p = (char*)g.getCode();
-        int sz = g.getSize();
-        FILE *fp = fopen("out.bin", "wb");
-        for (int i=0; i<sz; i++) {
-            fputc(p[i], fp);
-        }
-        fclose(fp);
-    }
 }           
 
 #define NUM_LOOP (16384*8)
@@ -561,6 +563,11 @@ main(int argc, char **argv)
             GEN(Ymm, "paddd", (g->vpaddd(dst, dst, src)), false, OT_INT);
             GEN(Ymm, "vpermps", (g->vpermps(dst, dst, src)), false, OT_FP32);
             GEN(Ymm, "vpermpd", (g->vpermpd(dst, dst, 0)), false, OT_FP64);
+
+            GEN_latency(Ymm, "vgatherdps",
+                        (g->vgatherdps(g->ymm2, g->ptr[g->rdx + g->ymm0*1], g->ymm1)),
+                        (g->vgatherdps(g->ymm2, g->ptr[g->rdx + g->ymm0*1], g->ymm1)); (g->vmovaps(g->ymm0,g->ymm2)),
+                        true, OT_FP32);
         }
 
         if (have_fma) {
