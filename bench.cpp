@@ -635,7 +635,7 @@ main(int argc, char **argv)
                         (g->vpgatherdd(g->ymm2, g->ptr[g->rdx + g->ymm0*1], g->ymm1)); (g->vmovdqa(g->ymm0,g->ymm2)),
                         false, OT_INT);
 
-            GEN_latency(Ymm, "gather(<ld+ins>x8 + perm)",
+            GEN_latency(Ymm, "gather32(<ld+ins>x8 + perm)",
 
                         /* throughput */
                         (g->vmovd(g->xmm2, g->ptr[g->rdx]));
@@ -661,6 +661,31 @@ main(int argc, char **argv)
                         (g->vmovd(g->edi, g->xmm2));
 
                         ,false, OT_FP32);
+
+
+            GEN_latency(Ymm, "vgatherdpd",
+                        (g->vgatherdpd(g->ymm2, g->ptr[g->rdx + g->xmm0*1], g->ymm1)),
+                        (g->vgatherdpd(g->ymm2, g->ptr[g->rdx + g->xmm0*1], g->ymm1)); (g->vmovdqa(g->ymm0,g->ymm2)),
+                        false, OT_INT);
+
+            GEN_latency(Ymm, "gather64(<ld+ins>x4 + perm)",
+
+                        /* throughput */
+                        (g->vmovq(g->xmm2, g->ptr[g->rdx]));
+                        (g->vmovq(g->xmm3, g->ptr[g->rdx]));
+                        (g->vpinsrq(g->xmm2, g->xmm2, g->ptr[g->rdx + 8], 1));
+                        (g->vpinsrd(g->xmm3, g->xmm3, g->ptr[g->rdx + 8], 1));
+                        (g->vperm2i128(g->ymm2,g->ymm2,g->ymm3,0));,
+
+                        /* latency */
+                        (g->vmovq(g->xmm2, g->ptr[g->rdx]));
+                        (g->vmovq(g->xmm3, g->ptr[g->rdx]));
+                        (g->vpinsrq(g->xmm2, g->xmm2, g->ptr[g->rdx + 8], 1));
+                        (g->vpinsrd(g->xmm3, g->xmm3, g->ptr[g->rdx + 8], 1));
+                        (g->vperm2i128(g->ymm2,g->ymm2,g->ymm3,0));
+                        (g->vmovd(g->edi, g->xmm2));,
+
+                        false, OT_FP32);
         }
 
         if (have_fma) {
