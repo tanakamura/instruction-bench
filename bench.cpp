@@ -559,6 +559,10 @@ main(int argc, char **argv)
     GEN(Xmm, "rsqrtps", (g->vrsqrtps(dst, dst)), false, OT_FP32);
     GEN(Ymm, "rcpps", (g->vrcpps(dst, dst)), false, OT_FP32);
     GEN(Xmm, "blendps", (g->blendps(dst, src, 0)), false, OT_FP32);
+    GEN_latency(Xmm, "blendvps",
+                (g->blendvps(dst, src));(g->xorps(dst,dst)),
+                (g->blendvps(dst, src)),
+                false, OT_FP32);
     GEN(Xmm, "pshufb", (g->pshufb(dst, src)), false, OT_INT);
     GEN(Xmm, "pmullw", (g->pmullw(dst, src)), false, OT_INT);
     GEN(Xmm, "phaddd", (g->phaddd(dst, src)), false, OT_INT);
@@ -629,6 +633,11 @@ main(int argc, char **argv)
             GEN(Ymm, "paddd", (g->vpaddd(dst, dst, src)), false, OT_INT);
             GEN(Ymm, "vpermps", (g->vpermps(dst, dst, src)), false, OT_FP32);
             GEN(Ymm, "vpermpd", (g->vpermpd(dst, dst, 0)), false, OT_FP64);
+
+            GEN_latency(Ymm, "vpmovsxwd",
+                        (g->vpmovsxwd(g->ymm1,g->xmm0)),
+                        (g->vpmovsxwd(g->ymm0,g->xmm0)),
+                        false, OT_INT);
 
             GEN_latency(Ymm, "vpgatherdd",
                         (g->vpgatherdd(g->ymm2, g->ptr[g->rdx + g->ymm0*1], g->ymm1)),
