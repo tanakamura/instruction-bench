@@ -7,11 +7,7 @@ struct G
   :public Xbyak::CodeGenerator
 {
   G() {
-    bndmk(bnd0, ptr[r10*4+4]);
-    bndmov(bnd0, ptr[r10*4+4]);
-    bndmov(ptr[r10*4+4], bnd0);
-    bndldx(bnd0, ptr[r10*4+4]);
-    bndstx(ptr[r10*4+4], bnd0);
+    vfmadd132ps(zmm0, zmm1, zmm2);
   }
 };
 

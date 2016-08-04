@@ -209,6 +209,59 @@ struct RegMap<Xbyak::Ymm>
     }
 };
 
+template <>
+struct RegMap<Xbyak::Zmm>
+{
+    const char *name;
+    Xbyak::Zmm v8, v9, v10, v11, v12, v13, v14, v15;
+
+    RegMap()
+        :name("m512"), v8(8), v9(9), v10(10), v11(11), v12(12), v13(13), v14(14), v15(15)
+        {}
+
+    void save(Xbyak::CodeGenerator *g, Xbyak::Ymm r, int off, enum operand_type ot) {
+        switch (ot) {
+        case OT_INT:
+            g->vmovdqa(g->ptr [g->rsp + off], r);
+            break;
+        case OT_FP32:
+            g->vmovaps(g->ptr [g->rsp + off], r);
+            break;
+        case OT_FP64:
+            g->vmovapd(g->ptr [g->rsp + off], r);
+            break;
+        }
+    }
+
+    void restore(Xbyak::CodeGenerator *g, Xbyak::Ymm r, int off, enum operand_type ot) {
+        switch (ot) {
+        case OT_INT:
+            g->vmovdqa(r, g->ptr [g->rsp + off]);
+            break;
+        case OT_FP32:
+            g->vmovaps(r, g->ptr [g->rsp + off]);
+            break;
+        case OT_FP64:
+            g->vmovapd(r, g->ptr [g->rsp + off]);
+            break;
+        }
+    }
+
+    void killdep(Xbyak::CodeGenerator *g, Xbyak::Ymm r, enum operand_type ot) {
+        switch (ot) {
+        case OT_INT:
+            g->vpxorq(r, r, r);
+            break;
+        case OT_FP32:
+            g->vpxorq(r, r, r);
+            break;
+        case OT_FP64:
+            g->vpxorq(r, r, r);
+            break;
+        }
+    }
+};
+
 
 
 template <>
@@ -251,19 +304,21 @@ struct Gen
     Gen(F f, int num_loop, int num_insn, enum lt_op o, enum operand_type ot) {
         RegMap<RegType> rm;
 
+        int reg_size = 64;
+
         push(rbp);
         mov(rbp, rsp);
-        and_(rsp, -(Xbyak::sint64)32);
-        sub(rsp, 32 * 9);
+        and_(rsp, -(Xbyak::sint64)64);
+        sub(rsp, reg_size * 9);
 
-        rm.save(this, rm.v8,  -32*8, ot);
-        rm.save(this, rm.v9,  -32*7, ot);
-        rm.save(this, rm.v10, -32*6, ot);
-        rm.save(this, rm.v11, -32*5, ot);
-        rm.save(this, rm.v12, -32*4, ot);
-        rm.save(this, rm.v13, -32*3, ot);
-        rm.save(this, rm.v14, -32*2, ot);
-        rm.save(this, rm.v15, -32*1, ot);
+        rm.save(this, rm.v8,  -reg_size*8, ot);
+        rm.save(this, rm.v9,  -reg_size*7, ot);
+        rm.save(this, rm.v10, -reg_size*6, ot);
+        rm.save(this, rm.v11, -reg_size*5, ot);
+        rm.save(this, rm.v12, -reg_size*4, ot);
+        rm.save(this, rm.v13, -reg_size*3, ot);
+        rm.save(this, rm.v14, -reg_size*2, ot);
+        rm.save(this, rm.v15, -reg_size*1, ot);
 
         rm.killdep(this, rm.v8, ot);
         rm.killdep(this, rm.v9, ot);
@@ -328,14 +383,14 @@ struct Gen
         jnz("@b");
 
         mov(rdi, ptr[rsp]);
-        rm.restore(this, rm.v8,  -32*8, ot);
-        rm.restore(this, rm.v9,  -32*7, ot);
-        rm.restore(this, rm.v10, -32*6, ot);
-        rm.restore(this, rm.v11, -32*5, ot);
-        rm.restore(this, rm.v12, -32*4, ot);
-        rm.restore(this, rm.v13, -32*3, ot);
-        rm.restore(this, rm.v14, -32*2, ot);
-        rm.restore(this, rm.v15, -32*1, ot);
+        rm.restore(this, rm.v8,  -reg_size*8, ot);
+        rm.restore(this, rm.v9,  -reg_size*7, ot);
+        rm.restore(this, rm.v10, -reg_size*6, ot);
+        rm.restore(this, rm.v11, -reg_size*5, ot);
+        rm.restore(this, rm.v12, -reg_size*4, ot);
+        rm.restore(this, rm.v13, -reg_size*3, ot);
+        rm.restore(this, rm.v14, -reg_size*2, ot);
+        rm.restore(this, rm.v15, -reg_size*1, ot);
 
         mov(rsp, rbp);
         pop(rbp);
@@ -434,16 +489,17 @@ lt(const char *name,
 }           
 
 #define NUM_LOOP (16384*8)
+#define NUM_INSN 32
 
 template <typename RegType, typename F>
 void
 run(const char *name, F f, bool kill_dep, enum operand_type ot)
 {
-    lt<RegType>(name, "latency", f, NUM_LOOP, 16, LT_LATENCY, ot);
+    lt<RegType>(name, "latency", f, NUM_LOOP, NUM_INSN, LT_LATENCY, ot);
     if (kill_dep) {
-        lt<RegType>(name, "throughput", f, NUM_LOOP, 16, LT_THROUGHPUT_KILLDEP, ot);
+        lt<RegType>(name, "throughput", f, NUM_LOOP, NUM_INSN, LT_THROUGHPUT_KILLDEP, ot);
     } else {
-        lt<RegType>(name, "throughput", f, NUM_LOOP, 16, LT_THROUGHPUT, ot);
+        lt<RegType>(name, "throughput", f, NUM_LOOP, NUM_INSN, LT_THROUGHPUT, ot);
     }
 }
 
@@ -451,11 +507,11 @@ template <typename RegType, typename F_t, typename F_l>
 void
 run_latency(const char *name, F_t f_t, F_l f_l, bool kill_dep, enum operand_type ot)
 {
-    lt<RegType>(name, "latency", f_l, NUM_LOOP, 16, LT_LATENCY, ot);
+    lt<RegType>(name, "latency", f_l, NUM_LOOP, NUM_INSN, LT_LATENCY, ot);
     if (kill_dep) {
-        lt<RegType>(name, "throughput", f_t, NUM_LOOP, 16, LT_THROUGHPUT_KILLDEP, ot);
+        lt<RegType>(name, "throughput", f_t, NUM_LOOP, NUM_INSN, LT_THROUGHPUT_KILLDEP, ot);
     } else {
-        lt<RegType>(name, "throughput", f_t, NUM_LOOP, 16, LT_THROUGHPUT, ot);
+        lt<RegType>(name, "throughput", f_t, NUM_LOOP, NUM_INSN, LT_THROUGHPUT, ot);
     }
 }
 
@@ -463,7 +519,7 @@ template <typename RegType, typename F_l>
 void
 run_latency_only(const char *name, F_l f_l, bool kill_dep, enum operand_type ot)
 {
-    lt<RegType>(name, "latency", f_l, NUM_LOOP, 16, LT_LATENCY, ot);
+    lt<RegType>(name, "latency", f_l, NUM_LOOP, NUM_INSN, LT_LATENCY, ot);
 }
 
 
@@ -472,9 +528,9 @@ void
 run_throghput_only(const char *name, F_t f_t,bool kill_dep, enum operand_type ot)
 {
     if (kill_dep) {
-        lt<RegType>(name, "throughput", f_t, NUM_LOOP, 16, LT_THROUGHPUT_KILLDEP, ot);
+        lt<RegType>(name, "throughput", f_t, NUM_LOOP, NUM_INSN, LT_THROUGHPUT_KILLDEP, ot);
     } else {
-        lt<RegType>(name, "throughput", f_t, NUM_LOOP, 16, LT_THROUGHPUT, ot);
+        lt<RegType>(name, "throughput", f_t, NUM_LOOP, NUM_INSN, LT_THROUGHPUT, ot);
     }
 }
 
@@ -564,6 +620,7 @@ main(int argc, char **argv)
                 (g->blendvps(dst, src)),
                 false, OT_FP32);
     GEN(Xmm, "pshufb", (g->pshufb(dst, src)), false, OT_INT);
+    GEN(Xmm, "shufps", (g->shufps(dst, src, 0)), false, OT_FP32);
     GEN(Xmm, "pmullw", (g->pmullw(dst, src)), false, OT_INT);
     GEN(Xmm, "phaddd", (g->phaddd(dst, src)), false, OT_INT);
     GEN(Xmm, "haddps", (g->phaddd(dst, src)), false, OT_FP32);
@@ -622,10 +679,6 @@ main(int argc, char **argv)
         if (reg[1] & (1<<16)) {
             have_avx512f = true;
         }
-
-        printf("have_avx512f = %d\n", have_avx512f);
-
-
 
 #ifdef _WIN32
         __cpuid(reg, 1);
@@ -709,6 +762,21 @@ main(int argc, char **argv)
         if (have_fma) {
             GEN(Ymm, "vfmaps", (g->vfmadd132ps(dst, src, src)), true, OT_FP32);
             GEN(Ymm, "vfmapd", (g->vfmadd132pd(dst, src, src)), true, OT_FP64);
+        }
+
+
+        if (have_avx512f) {
+            GEN(Zmm, "vfmaps", (g->vfmadd132ps(dst, src, src)), true, OT_FP32);
+            GEN(Zmm, "vfmapd", (g->vfmadd132pd(dst, src, src)), true, OT_FP64);
+            GEN(Zmm, "vfmaps reg, reg, [mem]", (g->vfmadd132pd(dst, src, g->ptr[g->rdx])), true, OT_FP32);
+            GEN(Zmm, "vpexpandd", (g->vpexpandd(dst, src)), true, OT_FP32);
+            GEN(Zmm, "vplzcntq", (g->vpexpandd(dst, src)), true, OT_FP32);
+            GEN(Zmm, "vpconflictd", (g->vpconflictd(dst, src)), true, OT_FP32);
+            GEN(Zmm, "vpermt2d", (g->vpermt2d(dst, src, src)), true, OT_FP32);
+            GEN(Zmm, "vshufps", (g->vshufps(dst, src, src, 0)), true, OT_FP32);
+            GEN(Zmm, "vrcp28pd", (g->vrcp28pd(dst, src)), true, OT_FP32);
+            GEN(Zmm, "vrcp14pd", (g->vrcp14pd(dst, src)), true, OT_FP32);
+            GEN(Zmm, "vpternlogd", (g->vpternlogd(dst, src, src, 0)), true, OT_FP32);
         }
     }
 
