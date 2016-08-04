@@ -607,6 +607,7 @@ main(int argc, char **argv)
         int reg[4];
         bool have_avx2 = false;
         bool have_fma = false;
+        bool have_avx512f = false;
 
 #ifdef _WIN32
         __cpuidex(reg, 7, 0);
@@ -617,6 +618,14 @@ main(int argc, char **argv)
         if (reg[1] & (1<<5)) {
             have_avx2 = true;
         }
+
+        if (reg[1] & (1<<16)) {
+            have_avx512f = true;
+        }
+
+        printf("have_avx512f = %d\n", have_avx512f);
+
+
 
 #ifdef _WIN32
         __cpuid(reg, 1);
