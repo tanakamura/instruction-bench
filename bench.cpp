@@ -214,9 +214,14 @@ struct RegMap<Xbyak::Zmm>
 {
     const char *name;
     Xbyak::Zmm v8, v9, v10, v11, v12, v13, v14, v15;
+    Xbyak::Zmm v16, v17, v18, v19, v20, v21, v22, v23;
+    Xbyak::Zmm v24, v25, v26, v27, v28, v29, v30, v31;
 
     RegMap()
-        :name("m512"), v8(8), v9(9), v10(10), v11(11), v12(12), v13(13), v14(14), v15(15)
+        :name("m512"),
+         v8(8), v9(9), v10(10), v11(11), v12(12), v13(13), v14(14), v15(15),
+         v16(16), v17(17), v18(18), v19(19), v20(20), v21(21), v22(22), v23(23),
+         v24(24), v25(25), v26(26), v27(27), v28(28), v29(29), v30(30), v31(31)
         {}
 
     void save(Xbyak::CodeGenerator *g, Xbyak::Ymm r, int off, enum operand_type ot) {
@@ -296,6 +301,48 @@ struct RegMap<Xbyak::Reg64>
 
 };
 
+template <typename RegType, typename Gen, typename F>
+struct gen_throughput{
+    void operator () (Gen *g, RegMap<RegType> &rm, F f, int num_insn){
+        for (int ii=0; ii<num_insn/8; ii++) {
+            f(g, rm.v8, rm.v8);
+            f(g, rm.v9, rm.v9);
+            f(g, rm.v10, rm.v10);
+            f(g, rm.v11, rm.v11);
+            f(g, rm.v12, rm.v12);
+            f(g, rm.v13, rm.v13);
+            f(g, rm.v14, rm.v14);
+            f(g, rm.v15, rm.v15);
+        }
+    }
+};
+
+
+template <typename Gen, typename F>
+struct gen_throughput<Xbyak::Zmm,Gen,F> {
+    void operator () (Gen *g, RegMap<Xbyak::Zmm> &rm, F f, int num_insn){
+        for (int ii=0; ii<num_insn/16; ii++) {
+            f(g, rm.v16, rm.v16);
+            f(g, rm.v17, rm.v17);
+            f(g, rm.v18, rm.v18);
+            f(g, rm.v19, rm.v19);
+            f(g, rm.v20, rm.v20);
+            f(g, rm.v21, rm.v21);
+            f(g, rm.v22, rm.v22);
+            f(g, rm.v23, rm.v23);
+            f(g, rm.v24, rm.v24);
+            f(g, rm.v25, rm.v25);
+            f(g, rm.v26, rm.v26);
+            f(g, rm.v27, rm.v27);
+            f(g, rm.v28, rm.v28);
+            f(g, rm.v29, rm.v29);
+            f(g, rm.v30, rm.v30);
+            f(g, rm.v31, rm.v31);
+        }
+    }
+};
+
+
 template <typename RegType,
           typename F>
 struct Gen
@@ -344,16 +391,7 @@ struct Gen
             break;
 
         case LT_THROUGHPUT:
-            for (int ii=0; ii<num_insn/8; ii++) {
-                f(this, rm.v8, rm.v8);
-                f(this, rm.v9, rm.v9);
-                f(this, rm.v10, rm.v10);
-                f(this, rm.v11, rm.v11);
-                f(this, rm.v12, rm.v12);
-                f(this, rm.v13, rm.v13);
-                f(this, rm.v14, rm.v14);
-                f(this, rm.v15, rm.v15);
-            }
+            gen_throughput<RegType,Gen,F>()(this, rm, f, num_insn);
             break;
 
         case LT_THROUGHPUT_KILLDEP:
