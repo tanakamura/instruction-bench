@@ -1,0 +1,120 @@
+Intel(R) Xeon Phi(TM) CPU 7210 @ 1.30GHz
+== latency/throughput ==
+   reg64:                                     add:   latency: CPI=    1.07, IPC=    0.94
+   reg64:                                     add:throughput: CPI=    0.58, IPC=    1.74
+   reg64:                                     lea:   latency: CPI=    1.02, IPC=    0.98
+   reg64:                                     lea:throughput: CPI=    0.58, IPC=    1.73
+   reg64:                                    load:   latency: CPI=    4.03, IPC=    0.25
+   reg64:                                    load:throughput: CPI=    1.01, IPC=    0.99
+    m128:                                    pxor:   latency: CPI=    2.02, IPC=    0.50
+    m128:                                    pxor:throughput: CPI=    0.60, IPC=    1.68
+    m128:                                    padd:   latency: CPI=    2.02, IPC=    0.50
+    m128:                                    padd:throughput: CPI=    0.60, IPC=    1.67
+    m128:                                  pmuldq:   latency: CPI=    6.04, IPC=    0.17
+    m128:                                  pmuldq:throughput: CPI=    6.02, IPC=    0.17
+    m128:                                  loadps:   latency: CPI=    9.07, IPC=    0.11
+    m128:                                  loadps:throughput: CPI=    0.57, IPC=    1.75
+    m128:                                   xorps:   latency: CPI=    2.02, IPC=    0.50
+    m128:                                   xorps:throughput: CPI=    0.60, IPC=    1.68
+    m128:                                   addps:   latency: CPI=    6.04, IPC=    0.17
+    m128:                                   addps:throughput: CPI=    0.76, IPC=    1.31
+    m128:                                   mulps:   latency: CPI=    6.04, IPC=    0.17
+    m128:                                   mulps:throughput: CPI=    0.95, IPC=    1.06
+    m128:                                   divps:   latency: CPI=   38.93, IPC=    0.03
+    m128:                                   divps:throughput: CPI=   16.14, IPC=    0.06
+    m128:                                   divpd:   latency: CPI=   37.57, IPC=    0.03
+    m128:                                   divpd:throughput: CPI=   16.15, IPC=    0.06
+    m128:                                 rsqrtps:   latency: CPI=    8.06, IPC=    0.12
+    m128:                                 rsqrtps:throughput: CPI=    3.02, IPC=    0.33
+    m256:                                   rcpps:   latency: CPI=    8.06, IPC=    0.12
+    m256:                                   rcpps:throughput: CPI=    3.03, IPC=    0.33
+    m128:                                 blendps:   latency: CPI=    6.02, IPC=    0.17
+    m128:                                 blendps:throughput: CPI=    6.01, IPC=    0.17
+    m128:                                blendvps:   latency: CPI=   10.10, IPC=    0.10
+    m128:                                blendvps:throughput: CPI=   13.06, IPC=    0.08
+    m128:                                  pshufb:   latency: CPI=   13.09, IPC=    0.08
+    m128:                                  pshufb:throughput: CPI=   12.11, IPC=    0.08
+    m128:                                  shufps:   latency: CPI=    4.03, IPC=    0.25
+    m128:                                  shufps:throughput: CPI=    2.02, IPC=    0.50
+    m128:                                  pmullw:   latency: CPI=    7.05, IPC=    0.14
+    m128:                                  pmullw:throughput: CPI=    2.02, IPC=    0.50
+    m128:                                  phaddd:   latency: CPI=   11.11, IPC=    0.09
+    m128:                                  phaddd:throughput: CPI=   11.10, IPC=    0.09
+    m128:                                  haddps:   latency: CPI=   11.09, IPC=    0.09
+    m128:                                  haddps:throughput: CPI=   11.12, IPC=    0.09
+    m128:                                  pinsrd:throughput: CPI=    6.00, IPC=    0.17
+    m128:                            pinsrd->pexr:   latency: CPI=   14.08, IPC=    0.07
+    m128:                                    dpps:   latency: CPI=   36.23, IPC=    0.03
+    m128:                                    dpps:throughput: CPI=   16.13, IPC=    0.06
+    m128:                                cvtps2dq:   latency: CPI=    2.02, IPC=    0.50
+    m128:                                cvtps2dq:throughput: CPI=    1.01, IPC=    0.99
+    m256:                            movaps [mem]:   latency: CPI=    1.07, IPC=    0.93
+    m256:                            movaps [mem]:throughput: CPI=    0.57, IPC=    1.75
+    m256:                         vmovdqu [mem+1]:   latency: CPI=    1.07, IPC=    0.93
+    m256:                         vmovdqu [mem+1]:throughput: CPI=    0.57, IPC=    1.75
+    m256:          vmovdqu [mem+63] (cross cache):   latency: CPI=    1.07, IPC=    0.93
+    m256:          vmovdqu [mem+63] (cross cache):throughput: CPI=    1.01, IPC=    0.99
+    m256:        vmovdqu [mem+2MB-1] (cross page):   latency: CPI=   14.12, IPC=    0.07
+    m256:        vmovdqu [mem+2MB-1] (cross page):throughput: CPI=   14.12, IPC=    0.07
+    m256:                                   xorps:   latency: CPI=    0.60, IPC=    1.68
+    m256:                                   xorps:throughput: CPI=    0.60, IPC=    1.68
+    m256:                                   mulps:   latency: CPI=    6.04, IPC=    0.17
+    m256:                                   mulps:throughput: CPI=    0.84, IPC=    1.19
+    m256:                                   addps:   latency: CPI=    6.04, IPC=    0.17
+    m256:                                   addps:throughput: CPI=    0.76, IPC=    1.31
+    m256:                                   divps:   latency: CPI=   38.91, IPC=    0.03
+    m256:                                   divps:throughput: CPI=   16.14, IPC=    0.06
+    m256:                                   divpd:   latency: CPI=   37.59, IPC=    0.03
+    m256:                                   divpd:throughput: CPI=   16.14, IPC=    0.06
+    m256:                                 rsqrtps:   latency: CPI=    8.06, IPC=    0.12
+    m256:                                 rsqrtps:throughput: CPI=    3.03, IPC=    0.33
+    m256:                                   rcpps:   latency: CPI=    8.05, IPC=    0.12
+    m256:                                   rcpps:throughput: CPI=    3.04, IPC=    0.33
+    m256:                                  sqrtps:   latency: CPI=   38.26, IPC=    0.03
+    m256:                                  sqrtps:throughput: CPI=   16.18, IPC=    0.06
+    m256:                              vperm2f128:   latency: CPI=    4.04, IPC=    0.25
+    m256:                              vperm2f128:throughput: CPI=    2.02, IPC=    0.50
+    m256:                                    pxor:   latency: CPI=    0.59, IPC=    1.69
+    m256:                                    pxor:throughput: CPI=    0.60, IPC=    1.68
+    m256:                                   paddd:   latency: CPI=    2.02, IPC=    0.50
+    m256:                                   paddd:throughput: CPI=    0.59, IPC=    1.69
+    m256:                                 vpermps:   latency: CPI=    3.02, IPC=    0.33
+    m256:                                 vpermps:throughput: CPI=    1.01, IPC=    0.99
+    m256:                                 vpermpd:   latency: CPI=    3.03, IPC=    0.33
+    m256:                                 vpermpd:throughput: CPI=    1.01, IPC=    0.99
+    m256:                               vpmovsxwd:   latency: CPI=    8.06, IPC=    0.12
+    m256:                               vpmovsxwd:throughput: CPI=    7.08, IPC=    0.14
+    m256:                              vpgatherdd:   latency: CPI=   19.14, IPC=    0.05
+    m256:                              vpgatherdd:throughput: CPI=    9.10, IPC=    0.11
+    m256:             gather32(<ld+ins>x8 + perm):   latency: CPI=   24.18, IPC=    0.04
+    m256:             gather32(<ld+ins>x8 + perm):throughput: CPI=    8.06, IPC=    0.12
+    m256:                              vgatherdpd:   latency: CPI=   18.12, IPC=    0.06
+    m256:                              vgatherdpd:throughput: CPI=    9.09, IPC=    0.11
+    m256:             gather64(<ld+ins>x4 + perm):   latency: CPI=    4.03, IPC=    0.25
+    m256:             gather64(<ld+ins>x4 + perm):throughput: CPI=    4.03, IPC=    0.25
+    m256:                                  vfmaps:   latency: CPI=    6.04, IPC=    0.17
+    m256:                                  vfmaps:throughput: CPI=    0.82, IPC=    1.22
+    m256:                                  vfmapd:   latency: CPI=    6.05, IPC=    0.17
+    m256:                                  vfmapd:throughput: CPI=    0.84, IPC=    1.19
+    m512:                                  vfmaps:   latency: CPI=    6.05, IPC=    0.17
+    m512:                                  vfmaps:throughput: CPI=    0.82, IPC=    1.21
+    m512:                                  vfmapd:   latency: CPI=    6.05, IPC=    0.17
+    m512:                                  vfmapd:throughput: CPI=    0.83, IPC=    1.20
+    m512:                  vfmaps reg, reg, [mem]:   latency: CPI=    6.04, IPC=    0.17
+    m512:                  vfmaps reg, reg, [mem]:throughput: CPI=    0.82, IPC=    1.22
+    m512:                               vpexpandd:   latency: CPI=    3.02, IPC=    0.33
+    m512:                               vpexpandd:throughput: CPI=    1.01, IPC=    0.99
+    m512:                                vplzcntq:   latency: CPI=    3.03, IPC=    0.33
+    m512:                                vplzcntq:throughput: CPI=    1.01, IPC=    0.99
+    m512:                             vpconflictd:   latency: CPI=    3.03, IPC=    0.33
+    m512:                             vpconflictd:throughput: CPI=    1.01, IPC=    0.99
+    m512:                                vpermt2d:   latency: CPI=    4.03, IPC=    0.25
+    m512:                                vpermt2d:throughput: CPI=    2.02, IPC=    0.50
+    m512:                                 vshufps:   latency: CPI=    4.03, IPC=    0.25
+    m512:                                 vshufps:throughput: CPI=    2.02, IPC=    0.50
+    m512:                                vrcp28pd:   latency: CPI=    7.05, IPC=    0.14
+    m512:                                vrcp28pd:throughput: CPI=    2.02, IPC=    0.50
+    m512:                                vrcp14pd:   latency: CPI=    7.05, IPC=    0.14
+    m512:                                vrcp14pd:throughput: CPI=    2.04, IPC=    0.49
+    m512:                              vpternlogd:   latency: CPI=    2.02, IPC=    0.50
+    m512:                              vpternlogd:throughput: CPI=    0.74, IPC=    1.36
