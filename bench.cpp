@@ -633,6 +633,8 @@ main(int argc, char **argv)
     }
     GEN(Reg64, "add", (g->add(dst, src)), false, OT_INT);
     GEN(Reg64, "lea", (g->lea(dst, g->ptr[src])), false, OT_INT);
+    GEN(Reg64, "xor dst,dst", (g->xor_(dst, dst)), false, OT_INT);
+    GEN(Reg64, "xor", (g->xor_(dst, src)), false, OT_INT);
     GEN(Reg64, "load", (g->mov(dst, g->ptr[src + g->rdx])), false, OT_INT);
 
     GEN(Xmm, "pxor", (g->pxor(dst, src)), false, OT_INT);
@@ -668,13 +670,13 @@ main(int argc, char **argv)
     GEN(Xmm, "dpps", (g->dpps(dst, src, 0xff)), false, OT_FP32);
     GEN(Xmm, "cvtps2dq", (g->cvtps2dq(dst, src)), false, OT_FP32);
 
-    /* 256 */
     {
         bool have_avx = false;
         int reg[4];
         bool have_avx2 = false;
         bool have_fma = false;
         bool have_avx512f = false;
+        bool have_popcnt = false;
 
 #ifdef _WIN32
         __cpuidex(reg, 7, 0);
@@ -702,6 +704,15 @@ main(int argc, char **argv)
         if (reg[2] & (1<<28)) {
             have_avx512f = true;
         }
+
+        if (reg[2] & (1<<23)) {
+            have_popcnt = true;
+        }
+
+        if (have_popcnt) {
+            GEN(Reg64, "popcnt", (g->popcnt(dst, src)), false, OT_INT);
+        }
+
         
         if (have_avx) {
             GEN_latency(Ymm, "movaps [mem]",
