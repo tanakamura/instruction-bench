@@ -636,6 +636,7 @@ main(int argc, char **argv)
     GEN(Reg64, "xor dst,dst", (g->xor_(dst, dst)), false, OT_INT);
     GEN(Reg64, "xor", (g->xor_(dst, src)), false, OT_INT);
     GEN(Reg64, "load", (g->mov(dst, g->ptr[src + g->rdx])), false, OT_INT);
+    GEN(Reg64, "crc32", (g->crc32(dst, src)), false, OT_INT);
 
     GEN(Xmm, "pxor", (g->pxor(dst, src)), false, OT_INT);
     GEN(Xmm, "padd", (g->paddd(dst, src)), false, OT_INT);
@@ -677,6 +678,7 @@ main(int argc, char **argv)
         bool have_fma = false;
         bool have_avx512f = false;
         bool have_popcnt = false;
+        bool have_aes = false;
 
 #ifdef _WIN32
         __cpuidex(reg, 7, 0);
@@ -709,8 +711,20 @@ main(int argc, char **argv)
             have_popcnt = true;
         }
 
+        if (reg[2] & (1<<25)) {
+            have_aes = true;
+        }
+
+
         if (have_popcnt) {
             GEN(Reg64, "popcnt", (g->popcnt(dst, src)), false, OT_INT);
+        }
+
+        if (have_aes) {
+            GEN(Xmm, "aesenc", (g->aesenc(dst,src)), false, OT_INT);
+            GEN(Xmm, "aesenclast", (g->aesenclast(dst,src)), false, OT_INT);
+            GEN(Xmm, "aesdec", (g->aesdec(dst,src)), false, OT_INT);
+            GEN(Xmm, "aesdeclast", (g->aesdeclast(dst,src)), false, OT_INT);
         }
 
         
