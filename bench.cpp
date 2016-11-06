@@ -527,7 +527,7 @@ lt(const char *name,
 }           
 
 #define NUM_LOOP (16384*8)
-#define NUM_INSN 32
+#define NUM_INSN 64
 
 template <typename RegType, typename F>
 void
@@ -647,11 +647,11 @@ main(int argc, char **argv)
 
     GEN(Xmm, "xorps", (g->xorps(dst, src)), false, OT_FP32);
     GEN(Xmm, "addps", (g->addps(dst, src)), false, OT_FP32);
-    GEN(Xmm, "mulps", (g->mulps(dst, src)), true, OT_FP32);
-    GEN(Xmm, "divps", (g->vdivps(dst, dst, src)), false, OT_FP32);
-    GEN(Xmm, "divpd", (g->vdivpd(dst, dst, src)), false, OT_FP64);
-    GEN(Xmm, "rsqrtps", (g->vrsqrtps(dst, dst)), false, OT_FP32);
-    GEN(Ymm, "rcpps", (g->vrcpps(dst, dst)), false, OT_FP32);
+    GEN(Xmm, "mulps", (g->mulps(dst, src)), false, OT_FP32);
+    GEN(Xmm, "divps", (g->divps(dst, src)), false, OT_FP32);
+    GEN(Xmm, "divpd", (g->divpd(dst, src)), false, OT_FP64);
+    GEN(Xmm, "rsqrtps", (g->rsqrtps(dst, dst)), false, OT_FP32);
+    GEN(Xmm, "rcpps", (g->rcpps(dst, dst)), false, OT_FP32);
     GEN(Xmm, "blendps", (g->blendps(dst, src, 0)), false, OT_FP32);
     GEN_latency(Xmm, "blendvps",
                 (g->blendvps(dst, src));(g->xorps(dst,dst)),
@@ -664,41 +664,13 @@ main(int argc, char **argv)
     GEN(Xmm, "haddps", (g->phaddd(dst, src)), false, OT_FP32);
 
     GEN_throughput_only(Xmm, "pinsrd", (g->pinsrb(dst, g->edx, 0)), false, OT_INT);
-    GEN_latency_only(Xmm, "pinsrd->pexr", (g->pinsrb(dst, g->edx, 0));(g->vpextrd(g->edx,dst,0)), false, OT_INT);
+    GEN_latency_only(Xmm, "pinsrd->pexr", (g->pinsrb(dst, g->edx, 0));(g->pextrd(g->edx,dst,0)), false, OT_INT);
     GEN(Xmm, "dpps", (g->dpps(dst, src, 0xff)), false, OT_FP32);
     GEN(Xmm, "cvtps2dq", (g->cvtps2dq(dst, src)), false, OT_FP32);
 
     /* 256 */
-    GEN_latency(Ymm, "movaps [mem]",
-                (g->vmovaps(dst, g->ptr[g->rdx])),
-                (g->vmovaps(dst, g->ptr[g->rdx + g->rdi])); (g->movq(g->rdi, dst)); ,
-                false, OT_FP32);
-
-    GEN_latency(Ymm, "vmovdqu [mem+1]",
-                (g->vmovdqu(dst, g->ptr[g->rdx + 1])),
-                (g->vmovdqu(dst, g->ptr[g->rdx + g->rdi + 1])); (g->movq(g->rdi, dst)); ,
-                false, OT_FP32);
-
-    GEN_latency(Ymm, "vmovdqu [mem+63] (cross cache)",
-                (g->vmovdqu(dst, g->ptr[g->rdx + 63])),
-                (g->vmovdqu(dst, g->ptr[g->rdx + g->rdi + 63])); (g->movq(g->rdi, dst)); ,
-                false, OT_FP32);
-
-    GEN_latency(Ymm, "vmovdqu [mem+2MB-1] (cross page)",
-                (g->vmovdqu(dst, g->ptr[g->rdx + (2048*1024-1)])),
-                (g->vmovdqu(dst, g->ptr[g->rdx + g->rdi + (2048*1024-1)])); (g->movq(g->rdi, dst)); ,
-                false, OT_FP32);
-
-    GEN(Ymm, "xorps", (g->vxorps(dst, dst, src)), false, OT_FP32);
-    GEN(Ymm, "mulps", (g->vmulps(dst, dst, src)), true, OT_FP32);
-    GEN(Ymm, "addps", (g->vaddps(dst, dst, src)), false, OT_FP32);
-    GEN(Ymm, "divps", (g->vdivps(dst, dst, src)), false, OT_FP32);
-    GEN(Ymm, "divpd", (g->vdivpd(dst, dst, src)), false, OT_FP64);
-    GEN(Ymm, "rsqrtps", (g->vrsqrtps(dst, dst)), false, OT_FP32);
-    GEN(Ymm, "rcpps", (g->vrcpps(dst, dst)), false, OT_FP32);
-    GEN(Ymm, "sqrtps", (g->vsqrtps(dst, dst)), false, OT_FP32);
-    GEN(Ymm, "vperm2f128", (g->vperm2f128(dst,dst,src,0)), false, OT_FP32);
     {
+        bool have_avx = false;
         int reg[4];
         bool have_avx2 = false;
         bool have_fma = false;
@@ -727,6 +699,41 @@ main(int argc, char **argv)
             have_fma = true;
         }
 
+        if (reg[2] & (1<<28)) {
+            have_avx512f = true;
+        }
+        
+        if (have_avx) {
+            GEN_latency(Ymm, "movaps [mem]",
+                        (g->vmovaps(dst, g->ptr[g->rdx])),
+                        (g->vmovaps(dst, g->ptr[g->rdx + g->rdi])); (g->movq(g->rdi, dst)); ,
+                        false, OT_FP32);
+
+            GEN_latency(Ymm, "vmovdqu [mem+1]",
+                        (g->vmovdqu(dst, g->ptr[g->rdx + 1])),
+                        (g->vmovdqu(dst, g->ptr[g->rdx + g->rdi + 1])); (g->movq(g->rdi, dst)); ,
+                        false, OT_FP32);
+
+            GEN_latency(Ymm, "vmovdqu [mem+63] (cross cache)",
+                        (g->vmovdqu(dst, g->ptr[g->rdx + 63])),
+                        (g->vmovdqu(dst, g->ptr[g->rdx + g->rdi + 63])); (g->movq(g->rdi, dst)); ,
+                        false, OT_FP32);
+
+            GEN_latency(Ymm, "vmovdqu [mem+2MB-1] (cross page)",
+                        (g->vmovdqu(dst, g->ptr[g->rdx + (2048*1024-1)])),
+                        (g->vmovdqu(dst, g->ptr[g->rdx + g->rdi + (2048*1024-1)])); (g->movq(g->rdi, dst)); ,
+                        false, OT_FP32);
+
+            GEN(Ymm, "xorps", (g->vxorps(dst, dst, src)), false, OT_FP32);
+            GEN(Ymm, "mulps", (g->vmulps(dst, dst, src)), true, OT_FP32);
+            GEN(Ymm, "addps", (g->vaddps(dst, dst, src)), false, OT_FP32);
+            GEN(Ymm, "divps", (g->vdivps(dst, dst, src)), false, OT_FP32);
+            GEN(Ymm, "divpd", (g->vdivpd(dst, dst, src)), false, OT_FP64);
+            GEN(Ymm, "rsqrtps", (g->vrsqrtps(dst, dst)), false, OT_FP32);
+            GEN(Ymm, "rcpps", (g->vrcpps(dst, dst)), false, OT_FP32);
+            GEN(Ymm, "sqrtps", (g->vsqrtps(dst, dst)), false, OT_FP32);
+            GEN(Ymm, "vperm2f128", (g->vperm2f128(dst,dst,src,0)), false, OT_FP32);
+        }
 
         if (have_avx2) {
             GEN(Ymm, "pxor", (g->vpxor(dst, dst, src)), false, OT_INT);
