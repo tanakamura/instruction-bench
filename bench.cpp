@@ -365,31 +365,6 @@ struct gen_throughput{
 };
 
 
-template <typename Gen, typename F>
-struct gen_throughput<Xbyak::Zmm,Gen,F> {
-    void operator () (Gen *g, RegMap<Xbyak::Zmm> &rm, F f, int num_insn){
-        for (int ii=0; ii<num_insn/16; ii++) {
-            f(g, rm.v16, rm.v16);
-            f(g, rm.v17, rm.v17);
-            f(g, rm.v18, rm.v18);
-            f(g, rm.v19, rm.v19);
-            f(g, rm.v20, rm.v20);
-            f(g, rm.v21, rm.v21);
-            f(g, rm.v22, rm.v22);
-            f(g, rm.v23, rm.v23);
-            f(g, rm.v24, rm.v24);
-            f(g, rm.v25, rm.v25);
-            f(g, rm.v26, rm.v26);
-            f(g, rm.v27, rm.v27);
-            f(g, rm.v28, rm.v28);
-            f(g, rm.v29, rm.v29);
-            f(g, rm.v30, rm.v30);
-            f(g, rm.v31, rm.v31);
-        }
-    }
-};
-
-
 template <typename RegType,
           typename F>
 struct Gen
@@ -443,6 +418,7 @@ struct Gen
         mov(ptr[rsp], rdi);
         xor_(rdi, rdi);
 
+        align(16);
         L("@@");
 
         switch (o) {
@@ -627,7 +603,7 @@ lt(const char *name,
 }           
 
 #define NUM_LOOP (16384*8)
-#define NUM_INSN 24
+#define NUM_INSN 36
 
 template <typename RegType, typename F>
 void
