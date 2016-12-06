@@ -107,11 +107,18 @@ template <>
 struct RegMap<Xbyak::Xmm>
 {
     const char *name;
+    Xbyak::Xmm v4, v5, v6, v7;
     Xbyak::Xmm v8, v9, v10, v11, v12, v13, v14, v15;
 
     RegMap()
-        :name("m128"), v8(8), v9(9), v10(10), v11(11), v12(12), v13(13), v14(14), v15(15)
+        :name("m128"),
+         v4(4), v5(5), v6(6), v7(7),
+         v8(8), v9(9), v10(10), v11(11), v12(12), v13(13), v14(14), v15(15)
         {}
+
+    bool vec_reg() {
+        return true;
+    }
 
     void save(Xbyak::CodeGenerator *g, Xbyak::Xmm r, int off, enum operand_type ot) {
         switch (ot) {
@@ -160,11 +167,19 @@ template <>
 struct RegMap<Xbyak::Ymm>
 {
     const char *name;
+
+    Xbyak::Ymm v4, v5, v6, v7;
     Xbyak::Ymm v8, v9, v10, v11, v12, v13, v14, v15;
 
     RegMap()
-        :name("m256"), v8(8), v9(9), v10(10), v11(11), v12(12), v13(13), v14(14), v15(15)
+        :name("m256"),
+         v4(4), v5(5), v6(6), v7(7),
+         v8(8), v9(9), v10(10), v11(11), v12(12), v13(13), v14(14), v15(15)
         {}
+
+    bool vec_reg() {
+        return true;
+    }
 
     void save(Xbyak::CodeGenerator *g, Xbyak::Ymm r, int off, enum operand_type ot) {
         switch (ot) {
@@ -213,16 +228,22 @@ template <>
 struct RegMap<Xbyak::Zmm>
 {
     const char *name;
+    Xbyak::Zmm v4, v5, v6, v7;
     Xbyak::Zmm v8, v9, v10, v11, v12, v13, v14, v15;
     Xbyak::Zmm v16, v17, v18, v19, v20, v21, v22, v23;
     Xbyak::Zmm v24, v25, v26, v27, v28, v29, v30, v31;
 
     RegMap()
         :name("m512"),
+         v4(4), v5(5), v6(6), v7(7),
          v8(8), v9(9), v10(10), v11(11), v12(12), v13(13), v14(14), v15(15),
          v16(16), v17(17), v18(18), v19(19), v20(20), v21(21), v22(22), v23(23),
          v24(24), v25(25), v26(26), v27(27), v28(28), v29(29), v30(30), v31(31)
         {}
+
+    bool vec_reg() {
+        return true;
+    }
 
     void save(Xbyak::CodeGenerator *g, Xbyak::Ymm r, int off, enum operand_type ot) {
         switch (ot) {
@@ -273,10 +294,15 @@ template <>
 struct RegMap<Xbyak::Reg64>
 {
     const char *name;
+    Xbyak::Reg64 v4, v5, v6, v7;
     Xbyak::Reg64 v8, v9, v10, v11, v12, v13, v14, v15;
 
     RegMap()
         :name("reg64"),
+         v4(Xbyak::Operand::RSP),
+         v5(Xbyak::Operand::RBP),
+         v6(Xbyak::Operand::RSI),
+         v7(Xbyak::Operand::RDI),
          v8(Xbyak::Operand::R8),
          v9(Xbyak::Operand::R9),
          v10(Xbyak::Operand::R10),
@@ -286,6 +312,10 @@ struct RegMap<Xbyak::Reg64>
          v14(Xbyak::Operand::R14),
          v15(Xbyak::Operand::R15)
         {}
+
+    bool vec_reg() {
+        return false;
+    }
 
     void save(Xbyak::CodeGenerator *g, Xbyak::Reg64 r, int off, enum operand_type ) {
         g->mov(g->ptr[g->rsp + off], r);
@@ -304,15 +334,32 @@ struct RegMap<Xbyak::Reg64>
 template <typename RegType, typename Gen, typename F>
 struct gen_throughput{
     void operator () (Gen *g, RegMap<RegType> &rm, F f, int num_insn){
-        for (int ii=0; ii<num_insn/8; ii++) {
-            f(g, rm.v8, rm.v8);
-            f(g, rm.v9, rm.v9);
-            f(g, rm.v10, rm.v10);
-            f(g, rm.v11, rm.v11);
-            f(g, rm.v12, rm.v12);
-            f(g, rm.v13, rm.v13);
-            f(g, rm.v14, rm.v14);
-            f(g, rm.v15, rm.v15);
+        if (rm.vec_reg()) {
+            for (int ii=0; ii<num_insn/12; ii++) {
+                f(g, rm.v4, rm.v4);
+                f(g, rm.v5, rm.v5);
+                f(g, rm.v6, rm.v6);
+                f(g, rm.v7, rm.v7);
+                f(g, rm.v8, rm.v8);
+                f(g, rm.v9, rm.v9);
+                f(g, rm.v10, rm.v10);
+                f(g, rm.v11, rm.v11);
+                f(g, rm.v12, rm.v12);
+                f(g, rm.v13, rm.v13);
+                f(g, rm.v14, rm.v14);
+                f(g, rm.v15, rm.v15);
+            }
+        } else {
+            for (int ii=0; ii<num_insn/8; ii++) {
+                f(g, rm.v8, rm.v8);
+                f(g, rm.v9, rm.v9);
+                f(g, rm.v10, rm.v10);
+                f(g, rm.v11, rm.v11);
+                f(g, rm.v12, rm.v12);
+                f(g, rm.v13, rm.v13);
+                f(g, rm.v14, rm.v14);
+                f(g, rm.v15, rm.v15);
+            }
         }
     }
 };
@@ -352,11 +399,19 @@ struct Gen
         RegMap<RegType> rm;
 
         int reg_size = 64;
+        int num_reg = 12;
 
         push(rbp);
         mov(rbp, rsp);
         and_(rsp, -(Xbyak::sint64)64);
-        sub(rsp, reg_size * 9);
+        sub(rsp, reg_size * (num_reg + 1));
+
+        if (rm.vec_reg()) {
+            rm.save(this, rm.v4,  -reg_size*12, ot);
+            rm.save(this, rm.v5,  -reg_size*11, ot);
+            rm.save(this, rm.v6,  -reg_size*10, ot);
+            rm.save(this, rm.v7,  -reg_size*9, ot);
+        }
 
         rm.save(this, rm.v8,  -reg_size*8, ot);
         rm.save(this, rm.v9,  -reg_size*7, ot);
@@ -366,6 +421,13 @@ struct Gen
         rm.save(this, rm.v13, -reg_size*3, ot);
         rm.save(this, rm.v14, -reg_size*2, ot);
         rm.save(this, rm.v15, -reg_size*1, ot);
+
+        if (rm.vec_reg()) {
+            rm.killdep(this, rm.v4, ot);
+            rm.killdep(this, rm.v5, ot);
+            rm.killdep(this, rm.v6, ot);
+            rm.killdep(this, rm.v7, ot);
+        }
 
         rm.killdep(this, rm.v8, ot);
         rm.killdep(this, rm.v9, ot);
@@ -395,25 +457,56 @@ struct Gen
             break;
 
         case LT_THROUGHPUT_KILLDEP:
-            for (int ii=0; ii<num_insn/8; ii++) {
-                f(this, rm.v8, rm.v8);
-                f(this, rm.v9, rm.v9);
-                f(this, rm.v10, rm.v10);
-                f(this, rm.v11, rm.v11);
-                f(this, rm.v12, rm.v12);
-                f(this, rm.v13, rm.v13);
-                f(this, rm.v14, rm.v14);
-                f(this, rm.v15, rm.v15);
-            }
+            if (rm.vec_reg()) {
+                for (int ii=0; ii<num_insn/12; ii++) {
+                    f(this, rm.v4, rm.v4);
+                    f(this, rm.v5, rm.v5);
+                    f(this, rm.v6, rm.v6);
+                    f(this, rm.v7, rm.v7);
+                    f(this, rm.v8, rm.v8);
+                    f(this, rm.v9, rm.v9);
+                    f(this, rm.v10, rm.v10);
+                    f(this, rm.v11, rm.v11);
+                    f(this, rm.v12, rm.v12);
+                    f(this, rm.v13, rm.v13);
+                    f(this, rm.v14, rm.v14);
+                    f(this, rm.v15, rm.v15);
+                }
 
-            rm.killdep(this, rm.v8, ot);
-            rm.killdep(this, rm.v9, ot);
-            rm.killdep(this, rm.v10, ot);
-            rm.killdep(this, rm.v11, ot);
-            rm.killdep(this, rm.v12, ot);
-            rm.killdep(this, rm.v13, ot);
-            rm.killdep(this, rm.v14, ot);
-            rm.killdep(this, rm.v15, ot);
+                rm.killdep(this, rm.v4, ot);
+                rm.killdep(this, rm.v5, ot);
+                rm.killdep(this, rm.v6, ot);
+                rm.killdep(this, rm.v7, ot);
+                rm.killdep(this, rm.v8, ot);
+                rm.killdep(this, rm.v9, ot);
+                rm.killdep(this, rm.v10, ot);
+                rm.killdep(this, rm.v11, ot);
+                rm.killdep(this, rm.v12, ot);
+                rm.killdep(this, rm.v13, ot);
+                rm.killdep(this, rm.v14, ot);
+                rm.killdep(this, rm.v15, ot);
+            } else {
+                for (int ii=0; ii<num_insn/8; ii++) {
+                    f(this, rm.v8, rm.v8);
+                    f(this, rm.v9, rm.v9);
+                    f(this, rm.v10, rm.v10);
+                    f(this, rm.v11, rm.v11);
+                    f(this, rm.v12, rm.v12);
+                    f(this, rm.v13, rm.v13);
+                    f(this, rm.v14, rm.v14);
+                    f(this, rm.v15, rm.v15);
+                }
+
+                rm.killdep(this, rm.v8, ot);
+                rm.killdep(this, rm.v9, ot);
+                rm.killdep(this, rm.v10, ot);
+                rm.killdep(this, rm.v11, ot);
+                rm.killdep(this, rm.v12, ot);
+                rm.killdep(this, rm.v13, ot);
+                rm.killdep(this, rm.v14, ot);
+                rm.killdep(this, rm.v15, ot);
+                
+            }
             break;
         }
 
@@ -421,6 +514,13 @@ struct Gen
         jnz("@b");
 
         mov(rdi, ptr[rsp]);
+        if (rm.vec_reg()) {
+            rm.restore(this, rm.v4,  -reg_size*12, ot);
+            rm.restore(this, rm.v5,  -reg_size*11, ot);
+            rm.restore(this, rm.v6, -reg_size*10, ot);
+            rm.restore(this, rm.v7, -reg_size*9, ot);
+        }
+
         rm.restore(this, rm.v8,  -reg_size*8, ot);
         rm.restore(this, rm.v9,  -reg_size*7, ot);
         rm.restore(this, rm.v10, -reg_size*6, ot);
@@ -527,7 +627,7 @@ lt(const char *name,
 }           
 
 #define NUM_LOOP (16384*8)
-#define NUM_INSN 64
+#define NUM_INSN 24
 
 template <typename RegType, typename F>
 void
@@ -704,7 +804,7 @@ main(int argc, char **argv)
         }
 
         if (reg[2] & (1<<28)) {
-            have_avx512f = true;
+            have_avx = true;
         }
 
         if (reg[2] & (1<<23)) {
@@ -750,7 +850,7 @@ main(int argc, char **argv)
                         false, OT_FP32);
 
             GEN(Ymm, "xorps", (g->vxorps(dst, dst, src)), false, OT_FP32);
-            GEN(Ymm, "mulps", (g->vmulps(dst, dst, src)), true, OT_FP32);
+            GEN(Ymm, "mulps", (g->vmulps(dst, dst, src)), false, OT_FP32);
             GEN(Ymm, "addps", (g->vaddps(dst, dst, src)), false, OT_FP32);
             GEN(Ymm, "divps", (g->vdivps(dst, dst, src)), false, OT_FP32);
             GEN(Ymm, "divpd", (g->vdivpd(dst, dst, src)), false, OT_FP64);
@@ -830,8 +930,8 @@ main(int argc, char **argv)
         }
 
         if (have_fma) {
-            GEN(Ymm, "vfmaps", (g->vfmadd132ps(dst, src, src)), true, OT_FP32);
-            GEN(Ymm, "vfmapd", (g->vfmadd132pd(dst, src, src)), true, OT_FP64);
+            GEN(Ymm, "vfmaps", (g->vfmadd132ps(dst, src, src)), false, OT_FP32);
+            GEN(Ymm, "vfmapd", (g->vfmadd132pd(dst, src, src)), false, OT_FP64);
         }
 
 
