@@ -908,6 +908,8 @@ main(int argc, char **argv)
         if (have_fma) {
             GEN(Ymm, "vfmaps", (g->vfmadd132ps(dst, src, src)), false, OT_FP32);
             GEN(Ymm, "vfmapd", (g->vfmadd132pd(dst, src, src)), false, OT_FP64);
+            GEN(Xmm, "vfmaps", (g->vfmadd132ps(dst, src, src)), false, OT_FP32);
+            GEN(Xmm, "vfmapd", (g->vfmadd132pd(dst, src, src)), false, OT_FP64);
         }
 
 
