@@ -903,6 +903,8 @@ main(int argc, char **argv)
                         (g->vmovd(g->edi, g->xmm2));,
 
                         false, OT_FP32);
+
+            GEN(Ymm, "vpshufb", (g->vpshufb(dst, src, src)), false, OT_INT);
         }
 
         if (have_fma) {
