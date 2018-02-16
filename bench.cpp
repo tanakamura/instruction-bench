@@ -719,10 +719,17 @@ main(int argc, char **argv)
     GEN(Xmm, "pmuldq", (g->pmuldq(dst, src)), false, OT_INT);
 
     /* 128 */
-    GEN_latency(Xmm, "loadps",
-                (g->movaps(dst, g->ptr[g->rdx])),
-                (g->movaps(dst, g->ptr[g->rdx + g->rdi])); (g->movq(g->rdi, dst)); ,
-                false, OT_INT);
+    GEN_throughput_only(Xmm, "loadps",
+                        (g->movaps(dst, g->ptr[g->rdx])),
+                        false, OT_INT);
+    
+    GEN_latency_only(Xmm, "loadps->movq",
+                     (g->movaps(dst, g->ptr[g->rdx + g->rdi])); (g->movq(g->rdi, dst));,
+                     false, OT_INT);
+
+    GEN(Xmm, "movq->movq",
+        (g->movq(g->rdi,src));(g->movq(dst,g->rdi));,
+        false, OT_INT);
 
     GEN(Xmm, "xorps", (g->xorps(dst, src)), false, OT_FP32);
     GEN(Xmm, "addps", (g->addps(dst, src)), false, OT_FP32);
@@ -742,7 +749,8 @@ main(int argc, char **argv)
     GEN(Xmm, "phaddd", (g->phaddd(dst, src)), false, OT_INT);
     GEN(Xmm, "haddps", (g->phaddd(dst, src)), false, OT_FP32);
 
-    GEN_throughput_only(Xmm, "pinsrd", (g->pinsrb(dst, g->edx, 0)), false, OT_INT);
+    GEN(Xmm, "pinsrd", 
+        (g->pinsrb(dst, g->edx, 0)), false, OT_INT);
     GEN_latency_only(Xmm, "pinsrd->pexr", (g->pinsrb(dst, g->edx, 0));(g->pextrd(g->edx,dst,0)), false, OT_INT);
     GEN(Xmm, "dpps", (g->dpps(dst, src, 0xff)), false, OT_FP32);
     GEN(Xmm, "cvtps2dq", (g->cvtps2dq(dst, src)), false, OT_FP32);
