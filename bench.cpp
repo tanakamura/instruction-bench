@@ -919,8 +919,8 @@ main(int argc, char **argv)
                         (g->vperm2i128(g->ymm2,g->ymm2,g->ymm3,0));,
 
                         /* latency */
-                        (g->vmovq(g->xmm2, g->ptr[g->rdx]));
-                        (g->vmovq(g->xmm3, g->ptr[g->rdx]));
+                        (g->vmovq(g->xmm2, g->ptr[g->rdx + g->rdi]));
+                        (g->vmovq(g->xmm3, g->ptr[g->rdx + g->rdi]));
                         (g->vpinsrq(g->xmm2, g->xmm2, g->ptr[g->rdx + 8], 1));
                         (g->vpinsrd(g->xmm3, g->xmm3, g->ptr[g->rdx + 8], 1));
                         (g->vperm2i128(g->ymm2,g->ymm2,g->ymm3,0));
