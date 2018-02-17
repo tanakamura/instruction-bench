@@ -553,16 +553,25 @@ struct Gen
 };
     
 
+template <typename RegType> int get_num_insn(void) {
+    RegMap<RegType> rm;
+    if (rm.vec_reg()) {
+        return 36;
+    } else {
+        return 64;
+    }
+ }
+
 template <typename RegType, typename F>
 void
 lt(const char *name,
    const char *on,
    F f,
    int num_loop,
-   int num_insn,
    enum lt_op o,
    enum operand_type ot)
 {
+    int num_insn = get_num_insn<RegType>();
 
     Gen<RegType,F> g(f, num_loop, num_insn, o, ot);
     typedef void (*func_t)(void);
@@ -603,17 +612,16 @@ lt(const char *name,
 }           
 
 #define NUM_LOOP (16384*8)
-#define NUM_INSN 36
 
 template <typename RegType, typename F>
 void
 run(const char *name, F f, bool kill_dep, enum operand_type ot)
 {
-    lt<RegType>(name, "latency", f, NUM_LOOP, NUM_INSN, LT_LATENCY, ot);
+    lt<RegType>(name, "latency", f, NUM_LOOP, LT_LATENCY, ot);
     if (kill_dep) {
-        lt<RegType>(name, "throughput", f, NUM_LOOP, NUM_INSN, LT_THROUGHPUT_KILLDEP, ot);
+        lt<RegType>(name, "throughput", f, NUM_LOOP, LT_THROUGHPUT_KILLDEP, ot);
     } else {
-        lt<RegType>(name, "throughput", f, NUM_LOOP, NUM_INSN, LT_THROUGHPUT, ot);
+        lt<RegType>(name, "throughput", f, NUM_LOOP, LT_THROUGHPUT, ot);
     }
 }
 
@@ -621,11 +629,11 @@ template <typename RegType, typename F_t, typename F_l>
 void
 run_latency(const char *name, F_t f_t, F_l f_l, bool kill_dep, enum operand_type ot)
 {
-    lt<RegType>(name, "latency", f_l, NUM_LOOP, NUM_INSN, LT_LATENCY, ot);
+    lt<RegType>(name, "latency", f_l, NUM_LOOP, LT_LATENCY, ot);
     if (kill_dep) {
-        lt<RegType>(name, "throughput", f_t, NUM_LOOP, NUM_INSN, LT_THROUGHPUT_KILLDEP, ot);
+        lt<RegType>(name, "throughput", f_t, NUM_LOOP, LT_THROUGHPUT_KILLDEP, ot);
     } else {
-        lt<RegType>(name, "throughput", f_t, NUM_LOOP, NUM_INSN, LT_THROUGHPUT, ot);
+        lt<RegType>(name, "throughput", f_t, NUM_LOOP, LT_THROUGHPUT, ot);
     }
 }
 
@@ -633,7 +641,7 @@ template <typename RegType, typename F_l>
 void
 run_latency_only(const char *name, F_l f_l, bool kill_dep, enum operand_type ot)
 {
-    lt<RegType>(name, "latency", f_l, NUM_LOOP, NUM_INSN, LT_LATENCY, ot);
+    lt<RegType>(name, "latency", f_l, NUM_LOOP, LT_LATENCY, ot);
 }
 
 
@@ -642,9 +650,9 @@ void
 run_throghput_only(const char *name, F_t f_t,bool kill_dep, enum operand_type ot)
 {
     if (kill_dep) {
-        lt<RegType>(name, "throughput", f_t, NUM_LOOP, NUM_INSN, LT_THROUGHPUT_KILLDEP, ot);
+        lt<RegType>(name, "throughput", f_t, NUM_LOOP, LT_THROUGHPUT_KILLDEP, ot);
     } else {
-        lt<RegType>(name, "throughput", f_t, NUM_LOOP, NUM_INSN, LT_THROUGHPUT, ot);
+        lt<RegType>(name, "throughput", f_t, NUM_LOOP, LT_THROUGHPUT, ot);
     }
 }
 
