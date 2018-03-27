@@ -1,126 +1,126 @@
 Intel(R) Xeon(R) CPU D-1571 @ 1.30GHz
-reg64,add,latency,1.004973e+00,9.950517e-01
-reg64,add,throughput,2.674311e-01,3.739280e+00
-reg64,lea,latency,1.005065e+00,9.949601e-01
-reg64,lea,throughput,5.026581e-01,1.989424e+00
-reg64,xor dst,dst,latency,2.673273e-01,3.740733e+00
-reg64,xor dst,dst,throughput,2.681216e-01,3.729651e+00
-reg64,xor,latency,2.667935e-01,3.748217e+00
-reg64,xor,throughput,2.669752e-01,3.745667e+00
-reg64,load,latency,5.018225e+00,1.992736e-01
-reg64,load,throughput,6.271194e-01,1.594593e+00
-reg64,crc32,latency,3.008708e+00,3.323686e-01
-reg64,crc32,throughput,1.004407e+00,9.956128e-01
-reg64,store [mem+0]->load[mem+0],latency,1.229809e+01,8.131346e-02
-reg64,store [mem+0]->load[mem+0],throughput,1.263498e+00,7.914536e-01
-reg64,store [mem+0]->load[mem+1],latency,2.005496e+01,4.986297e-02
-reg64,store [mem+0]->load[mem+1],throughput,1.403018e+01,7.127491e-02
-m128,pxor,latency,2.789192e-01,3.585267e+00
-m128,pxor,throughput,2.788330e-01,3.586377e+00
-m128,padd,latency,1.001848e+00,9.981556e-01
-m128,padd,throughput,5.016780e-01,1.993310e+00
-m128,pmuldq,latency,5.007053e+00,1.997183e-01
-m128,pmuldq,throughput,1.004096e+00,9.959206e-01
-m128,loadps,throughput,5.022187e-01,1.991165e+00
-m128,loadps->movq,latency,7.015473e+00,1.425421e-01
-m128,movq->movq,latency,2.005896e+00,4.985304e-01
-m128,movq->movq,throughput,1.003348e+00,9.966633e-01
-m128,xorps,latency,2.780946e-01,3.595899e+00
-m128,xorps,throughput,2.802274e-01,3.568530e+00
-m128,addps,latency,3.006279e+00,3.326371e-01
-m128,addps,throughput,1.002947e+00,9.970618e-01
-m128,mulps,latency,3.006905e+00,3.325678e-01
-m128,mulps,throughput,5.009253e-01,1.996306e+00
-m128,divps,latency,1.101906e+01,9.075183e-02
-m128,divps,throughput,5.018333e+00,1.992694e-01
-m128,divpd,latency,1.001912e+01,9.980915e-02
-m128,divpd,throughput,8.019880e+00,1.246902e-01
-m128,rsqrtps,latency,5.007374e+00,1.997055e-01
-m128,rsqrtps,throughput,1.003458e+00,9.965543e-01
-m128,rcpps,latency,5.007036e+00,1.997190e-01
-m128,rcpps,throughput,1.003550e+00,9.964626e-01
-m128,blendps,latency,1.002340e+00,9.976658e-01
-m128,blendps,throughput,3.348607e-01,2.986316e+00
-m128,blendvps,latency,2.005733e+00,4.985708e-01
-m128,blendvps,throughput,2.005913e+00,4.985262e-01
-m128,pshufb,latency,1.003750e+00,9.962642e-01
-m128,pshufb,throughput,1.003409e+00,9.966023e-01
-m128,shufps,latency,1.002875e+00,9.971337e-01
-m128,shufps,throughput,1.003995e+00,9.960211e-01
-m128,pmullw,latency,5.008149e+00,1.996746e-01
-m128,pmullw,throughput,1.002987e+00,9.970216e-01
-m128,phaddd,latency,3.006421e+00,3.326215e-01
-m128,phaddd,throughput,2.006900e+00,4.982809e-01
-m128,haddps,latency,3.008436e+00,3.323987e-01
-m128,haddps,throughput,2.004859e+00,4.987882e-01
-m128,pinsrd,latency,2.006613e+00,4.983521e-01
-m128,pinsrd,throughput,2.005743e+00,4.985682e-01
-m128,pinsrd->pexr,latency,4.008697e+00,2.494576e-01
-m128,dpps,latency,1.202914e+01,8.313149e-02
-m128,dpps,throughput,2.322817e+00,4.305117e-01
-m128,cvtps2dq,latency,3.007693e+00,3.324808e-01
-m128,cvtps2dq,throughput,1.003005e+00,9.970039e-01
-reg64,popcnt,latency,3.005474e+00,3.327262e-01
-reg64,popcnt,throughput,1.002859e+00,9.971488e-01
-m128,aesenc,latency,7.009787e+00,1.426577e-01
-m128,aesenc,throughput,1.002855e+00,9.971530e-01
-m128,aesenclast,latency,7.010405e+00,1.426451e-01
-m128,aesenclast,throughput,1.003355e+00,9.966562e-01
-m128,aesdec,latency,7.010376e+00,1.426457e-01
-m128,aesdec,throughput,1.002932e+00,9.970763e-01
-m128,aesdeclast,latency,7.009791e+00,1.426576e-01
-m128,aesdeclast,throughput,1.003441e+00,9.965703e-01
-m256,movaps [mem],latency,1.004108e+00,9.959086e-01
-m256,movaps [mem],throughput,5.020305e-01,1.991911e+00
-m256,vmovdqu [mem+1],latency,1.003395e+00,9.966166e-01
-m256,vmovdqu [mem+1],throughput,5.025395e-01,1.989893e+00
-m256,vmovdqu [mem+63] (cross cache),latency,1.003030e+00,9.969792e-01
-m256,vmovdqu [mem+63] (cross cache),throughput,1.002858e+00,9.971501e-01
-m256,vmovdqu [mem+2MB-1] (cross page),latency,3.105357e+01,3.220242e-02
-m256,vmovdqu [mem+2MB-1] (cross page),throughput,3.104719e+01,3.220904e-02
-m256,xorps,latency,2.785920e-01,3.589478e+00
-m256,xorps,throughput,2.789832e-01,3.584445e+00
-m256,mulps,latency,3.007709e+00,3.324790e-01
-m256,mulps,throughput,5.020894e-01,1.991677e+00
-m256,addps,latency,3.008182e+00,3.324267e-01
-m256,addps,throughput,1.003634e+00,9.963788e-01
-m256,divps,latency,1.719296e+01,5.816334e-02
-m256,divps,throughput,1.009180e+01,9.909030e-02
-m256,divpd,latency,1.908553e+01,5.239571e-02
-m256,divpd,throughput,1.616236e+01,6.187217e-02
-m256,rsqrtps,latency,7.012768e+00,1.425970e-01
-m256,rsqrtps,throughput,2.005612e+00,4.986009e-01
-m256,rcpps,latency,7.013066e+00,1.425910e-01
-m256,rcpps,throughput,2.005002e+00,4.987525e-01
-m256,sqrtps,latency,1.808513e+01,5.529404e-02
-m256,sqrtps,throughput,1.409353e+01,7.095456e-02
-m256,vperm2f128,latency,3.007397e+00,3.325135e-01
-m256,vperm2f128,throughput,1.002604e+00,9.974024e-01
-m256,pxor,latency,2.787321e-01,3.587674e+00
-m256,pxor,throughput,2.793477e-01,3.579768e+00
-m256,paddd,latency,1.001859e+00,9.981442e-01
-m256,paddd,throughput,5.016569e-01,1.993394e+00
-m256,vpermps,latency,3.005741e+00,3.326967e-01
-m256,vpermps,throughput,1.002794e+00,9.972137e-01
-m256,vpermpd,latency,3.005995e+00,3.326686e-01
-m256,vpermpd,throughput,1.003387e+00,9.966248e-01
-m256,vpmovsxwd,latency,3.005906e+00,3.326784e-01
-m256,vpmovsxwd,throughput,1.002630e+00,9.973773e-01
-m256,vpgatherdd,latency,2.115873e+01,4.726182e-02
-m256,vpgatherdd,throughput,6.039604e+00,1.655738e-01
-m256,gather32(<ld+ins>x8 + perm),latency,1.703337e+01,5.870827e-02
-m256,gather32(<ld+ins>x8 + perm),throughput,8.018380e+00,1.247135e-01
-m256,vgatherdpd,latency,1.819960e+01,5.494625e-02
-m256,vgatherdpd,throughput,5.037440e+00,1.985135e-01
-m256,gather64(<ld+ins>x4 + perm),latency,1.217309e+01,8.214839e-02
-m256,gather64(<ld+ins>x4 + perm),throughput,4.008251e+00,2.494854e-01
-m256,vpshufb,latency,1.003590e+00,9.964232e-01
-m256,vpshufb,throughput,1.003579e+00,9.964335e-01
-m256,vfmaps,latency,5.007607e+00,1.996962e-01
-m256,vfmaps,throughput,5.009853e-01,1.996067e+00
-m256,vfmapd,latency,5.008733e+00,1.996513e-01
-m256,vfmapd,throughput,5.014691e-01,1.994141e+00
-m128,vfmaps,latency,5.009474e+00,1.996218e-01
-m128,vfmaps,throughput,5.014542e-01,1.994200e+00
-m128,vfmapd,latency,5.008544e+00,1.996588e-01
-m128,vfmapd,throughput,5.010346e-01,1.995870e+00
+"reg64","add","latency","1.005435e+00","9.945939e-01"
+"reg64","add","throughput","2.673515e-01","3.740394e+00"
+"reg64","lea","latency","1.005118e+00","9.949084e-01"
+"reg64","lea","throughput","5.030286e-01","1.987958e+00"
+"reg64","xor dst,dst","latency","2.673577e-01","3.740307e+00"
+"reg64","xor dst,dst","throughput","2.673202e-01","3.740833e+00"
+"reg64","xor","latency","2.668270e-01","3.747747e+00"
+"reg64","xor","throughput","2.669234e-01","3.746393e+00"
+"reg64","load","latency","5.018156e+00","1.992764e-01"
+"reg64","load","throughput","6.271042e-01","1.594631e+00"
+"reg64","crc32","latency","3.008892e+00","3.323482e-01"
+"reg64","crc32","throughput","1.004368e+00","9.956510e-01"
+"reg64","store [mem+0]->load[mem+0]","latency","1.229579e+01","8.132862e-02"
+"reg64","store [mem+0]->load[mem+0]","throughput","1.263294e+00","7.915815e-01"
+"reg64","store [mem+0]->load[mem+1]","latency","2.005469e+01","4.986365e-02"
+"reg64","store [mem+0]->load[mem+1]","throughput","1.403139e+01","7.126875e-02"
+"m128","pxor","latency","2.792659e-01","3.580816e+00"
+"m128","pxor","throughput","2.789258e-01","3.585183e+00"
+"m128","padd","latency","1.001859e+00","9.981446e-01"
+"m128","padd","throughput","5.019989e-01","1.992036e+00"
+"m128","pmuldq","latency","5.007596e+00","1.996966e-01"
+"m128","pmuldq","throughput","1.002865e+00","9.971433e-01"
+"m128","loadps","throughput","5.020837e-01","1.991700e+00"
+"m128","loadps->movq","latency","7.012644e+00","1.425996e-01"
+"m128","movq->movq","latency","2.005775e+00","4.985604e-01"
+"m128","movq->movq","throughput","1.004190e+00","9.958275e-01"
+"m128","xorps","latency","2.786104e-01","3.589241e+00"
+"m128","xorps","throughput","2.790360e-01","3.583767e+00"
+"m128","addps","latency","3.006787e+00","3.325809e-01"
+"m128","addps","throughput","1.003402e+00","9.966099e-01"
+"m128","mulps","latency","3.006605e+00","3.326011e-01"
+"m128","mulps","throughput","5.009242e-01","1.996310e+00"
+"m128","divps","latency","1.101913e+01","9.075130e-02"
+"m128","divps","throughput","5.018023e+00","1.992817e-01"
+"m128","divpd","latency","1.001664e+01","9.983390e-02"
+"m128","divpd","throughput","8.021761e+00","1.246609e-01"
+"m128","rsqrtps","latency","5.007502e+00","1.997004e-01"
+"m128","rsqrtps","throughput","1.003823e+00","9.961916e-01"
+"m128","rcpps","latency","5.008220e+00","1.996717e-01"
+"m128","rcpps","throughput","1.003651e+00","9.963626e-01"
+"m128","blendps","latency","1.003578e+00","9.964348e-01"
+"m128","blendps","throughput","3.341694e-01","2.992494e+00"
+"m128","blendvps","latency","2.006539e+00","4.983705e-01"
+"m128","blendvps","throughput","2.005635e+00","4.985952e-01"
+"m128","pshufb","latency","1.002921e+00","9.970875e-01"
+"m128","pshufb","throughput","1.001989e+00","9.980154e-01"
+"m128","shufps","latency","1.002982e+00","9.970270e-01"
+"m128","shufps","throughput","1.002853e+00","9.971551e-01"
+"m128","pmullw","latency","5.007810e+00","1.996881e-01"
+"m128","pmullw","throughput","1.002626e+00","9.973805e-01"
+"m128","phaddd","latency","3.007200e+00","3.325353e-01"
+"m128","phaddd","throughput","2.005810e+00","4.985518e-01"
+"m128","haddps","latency","3.007363e+00","3.325172e-01"
+"m128","haddps","throughput","2.005387e+00","4.986569e-01"
+"m128","pinsrd","latency","2.007249e+00","4.981942e-01"
+"m128","pinsrd","throughput","2.005805e+00","4.985529e-01"
+"m128","pinsrd->pexr","latency","4.008767e+00","2.494533e-01"
+"m128","dpps","latency","1.202906e+01","8.313203e-02"
+"m128","dpps","throughput","2.321211e+00","4.308097e-01"
+"m128","cvtps2dq","latency","3.006614e+00","3.326000e-01"
+"m128","cvtps2dq","throughput","1.002633e+00","9.973737e-01"
+"reg64","popcnt","latency","3.006188e+00","3.326472e-01"
+"reg64","popcnt","throughput","1.003134e+00","9.968755e-01"
+"m128","aesenc","latency","7.010418e+00","1.426448e-01"
+"m128","aesenc","throughput","1.002947e+00","9.970614e-01"
+"m128","aesenclast","latency","7.011492e+00","1.426230e-01"
+"m128","aesenclast","throughput","1.002983e+00","9.970260e-01"
+"m128","aesdec","latency","7.009893e+00","1.426555e-01"
+"m128","aesdec","throughput","1.003703e+00","9.963104e-01"
+"m128","aesdeclast","latency","7.010402e+00","1.426452e-01"
+"m128","aesdeclast","throughput","1.002656e+00","9.973512e-01"
+"m256","movaps [mem]","latency","1.003582e+00","9.964310e-01"
+"m256","movaps [mem]","throughput","5.022303e-01","1.991118e+00"
+"m256","vmovdqu [mem+1]","latency","1.003402e+00","9.966090e-01"
+"m256","vmovdqu [mem+1]","throughput","5.015736e-01","1.993725e+00"
+"m256","vmovdqu [mem+63] (cross cache)","latency","1.004246e+00","9.957720e-01"
+"m256","vmovdqu [mem+63] (cross cache)","throughput","1.004481e+00","9.955392e-01"
+"m256","vmovdqu [mem+2MB-1] (cross page)","latency","3.105519e+01","3.220074e-02"
+"m256","vmovdqu [mem+2MB-1] (cross page)","throughput","3.104532e+01","3.221098e-02"
+"m256","xorps","latency","2.791684e-01","3.582067e+00"
+"m256","xorps","throughput","2.790542e-01","3.583533e+00"
+"m256","mulps","latency","3.007174e+00","3.325381e-01"
+"m256","mulps","throughput","5.015511e-01","1.993815e+00"
+"m256","addps","latency","3.007763e+00","3.324730e-01"
+"m256","addps","throughput","1.003600e+00","9.964127e-01"
+"m256","divps","latency","1.719467e+01","5.815756e-02"
+"m256","divps","throughput","1.009360e+01","9.907269e-02"
+"m256","divpd","latency","1.908511e+01","5.239688e-02"
+"m256","divpd","throughput","1.616323e+01","6.186883e-02"
+"m256","rsqrtps","latency","7.013317e+00","1.425859e-01"
+"m256","rsqrtps","throughput","2.006882e+00","4.982853e-01"
+"m256","rcpps","latency","7.013340e+00","1.425854e-01"
+"m256","rcpps","throughput","2.004963e+00","4.987623e-01"
+"m256","sqrtps","latency","1.808487e+01","5.529484e-02"
+"m256","sqrtps","throughput","1.409339e+01","7.095526e-02"
+"m256","vperm2f128","latency","3.006833e+00","3.325758e-01"
+"m256","vperm2f128","throughput","1.002868e+00","9.971400e-01"
+"m256","pxor","latency","2.788529e-01","3.586120e+00"
+"m256","pxor","throughput","2.780111e-01","3.596979e+00"
+"m256","paddd","latency","1.002739e+00","9.972681e-01"
+"m256","paddd","throughput","5.009634e-01","1.996154e+00"
+"m256","vpermps","latency","3.008312e+00","3.324123e-01"
+"m256","vpermps","throughput","1.003438e+00","9.965739e-01"
+"m256","vpermpd","latency","3.006010e+00","3.326669e-01"
+"m256","vpermpd","throughput","1.002575e+00","9.974315e-01"
+"m256","vpmovsxwd","latency","3.006030e+00","3.326647e-01"
+"m256","vpmovsxwd","throughput","1.003455e+00","9.965573e-01"
+"m256","vpgatherdd","latency","2.115726e+01","4.726510e-02"
+"m256","vpgatherdd","throughput","6.039028e+00","1.655896e-01"
+"m256","gather32(<ld+ins>x8 + perm)","latency","1.703472e+01","5.870364e-02"
+"m256","gather32(<ld+ins>x8 + perm)","throughput","8.018219e+00","1.247160e-01"
+"m256","vgatherdpd","latency","1.819990e+01","5.494535e-02"
+"m256","vgatherdpd","throughput","5.037717e+00","1.985026e-01"
+"m256","gather64(<ld+ins>x4 + perm)","latency","1.217406e+01","8.214183e-02"
+"m256","gather64(<ld+ins>x4 + perm)","throughput","4.007869e+00","2.495092e-01"
+"m256","vpshufb","latency","1.006102e+00","9.939352e-01"
+"m256","vpshufb","throughput","1.003021e+00","9.969881e-01"
+"m256","vfmaps","latency","5.008734e+00","1.996512e-01"
+"m256","vfmaps","throughput","5.014875e-01","1.994068e+00"
+"m256","vfmapd","latency","5.008636e+00","1.996551e-01"
+"m256","vfmapd","throughput","5.010047e-01","1.995989e+00"
+"m128","vfmaps","latency","5.008727e+00","1.996515e-01"
+"m128","vfmaps","throughput","5.016058e-01","1.993597e+00"
+"m128","vfmapd","latency","5.008312e+00","1.996681e-01"
+"m128","vfmapd","throughput","5.009094e-01","1.996369e+00"

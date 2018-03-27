@@ -596,7 +596,7 @@ lt(const char *name,
     long long e = read_cycle();
 
     if (output_csv) {
-        printf("%s,%s,%s,%e,%e\n",
+        printf("\"%s\",\"%s\",\"%s\",\"%e\",\"%e\"\n",
                RegMap<RegType>().name,
                name, on,
                (e-b)/(double)(num_insn * num_loop), 
