@@ -1,95 +1,126 @@
-Intel(R) Core(TM) i7-5600U CPU @ 2.60GHz
-reg64,add,latency,1.030861e+00,9.700625e-01
-reg64,add,throughput,2.818818e-01,3.547586e+00
-reg64,lea,latency,1.023342e+00,9.771903e-01
-reg64,lea,throughput,5.005817e-01,1.997676e+00
-reg64,load,latency,5.004428e+00,1.998230e-01
-reg64,load,throughput,6.362376e-01,1.571740e+00
-m128,pxor,latency,2.817674e-01,3.549027e+00
-m128,pxor,throughput,2.817497e-01,3.549249e+00
-m128,padd,latency,1.012129e+00,9.880161e-01
-m128,padd,throughput,5.005937e-01,1.997628e+00
-m128,pmuldq,latency,5.004740e+00,1.998106e-01
-m128,pmuldq,throughput,1.009872e+00,9.902245e-01
-m128,loadps,latency,7.008582e+00,1.426822e-01
-m128,loadps,throughput,5.006108e-01,1.997560e+00
-m128,xorps,latency,2.819524e-01,3.546698e+00
-m128,xorps,throughput,2.818508e-01,3.547976e+00
-m128,addps,latency,3.011777e+00,3.320299e-01
-m128,addps,throughput,1.000665e+00,9.993353e-01
-m128,mulps,latency,3.006122e+00,3.326545e-01
-m128,mulps,throughput,5.004754e-01,1.998100e+00
-m128,divps,latency,1.103706e+01,9.060384e-02
-m128,divps,throughput,5.032380e+00,1.987131e-01
-m128,divpd,latency,1.001891e+01,9.981128e-02
-m128,divpd,throughput,8.020808e+00,1.246757e-01
-m128,rsqrtps,latency,5.004452e+00,1.998221e-01
-m128,rsqrtps,throughput,1.000502e+00,9.994981e-01
-m256,rcpps,latency,7.003623e+00,1.427832e-01
-m256,rcpps,throughput,2.000422e+00,4.998944e-01
-m128,blendps,latency,1.005609e+00,9.944227e-01
-m128,blendps,throughput,3.338761e-01,2.995123e+00
-m128,blendvps,latency,2.000520e+00,4.998700e-01
-m128,blendvps,throughput,2.007030e+00,4.982487e-01
-m128,pshufb,latency,1.000565e+00,9.994357e-01
-m128,pshufb,throughput,1.000485e+00,9.995153e-01
-m128,pmullw,latency,5.008996e+00,1.996408e-01
-m128,pmullw,throughput,1.006953e+00,9.930952e-01
-m128,phaddd,latency,3.009148e+00,3.323200e-01
-m128,phaddd,throughput,2.000486e+00,4.998784e-01
-m128,haddps,latency,3.005018e+00,3.327767e-01
-m128,haddps,throughput,2.000496e+00,4.998759e-01
-m128,pinsrd,throughput,2.000467e+00,4.998833e-01
-m128,pinsrd->pexr,latency,4.007326e+00,2.495430e-01
-m128,dpps,latency,1.201816e+01,8.320744e-02
-m128,dpps,throughput,2.403342e+00,4.160872e-01
-m128,cvtps2dq,latency,3.000432e+00,3.332853e-01
-m128,cvtps2dq,throughput,1.000450e+00,9.995501e-01
-m256,movaps [mem],latency,1.010518e+00,9.895914e-01
-m256,movaps [mem],throughput,5.005054e-01,1.997980e+00
-m256,vmovdqu [mem+1],latency,1.000576e+00,9.994248e-01
-m256,vmovdqu [mem+1],throughput,5.004716e-01,1.998115e+00
-m256,vmovdqu [mem+63] (cross cache),latency,1.000838e+00,9.991624e-01
-m256,vmovdqu [mem+63] (cross cache),throughput,1.000576e+00,9.994248e-01
-m256,vmovdqu [mem+2MB-1] (cross page),latency,3.103955e+01,3.221697e-02
-m256,vmovdqu [mem+2MB-1] (cross page),throughput,3.103160e+01,3.222522e-02
-m256,xorps,latency,2.865520e-01,3.489769e+00
-m256,xorps,throughput,2.817392e-01,3.549381e+00
-m256,mulps,latency,3.000540e+00,3.332733e-01
-m256,mulps,throughput,5.084925e-01,1.966597e+00
-m256,addps,latency,3.007451e+00,3.325075e-01
-m256,addps,throughput,1.000462e+00,9.995386e-01
-m256,divps,latency,1.718187e+01,5.820087e-02
-m256,divps,throughput,1.006536e+01,9.935064e-02
-m256,divpd,latency,1.906587e+01,5.244975e-02
-m256,divpd,throughput,1.611503e+01,6.205389e-02
-m256,rsqrtps,latency,7.003515e+00,1.427854e-01
-m256,rsqrtps,throughput,2.000476e+00,4.998811e-01
-m256,rcpps,latency,7.004030e+00,1.427749e-01
-m256,rcpps,throughput,2.000471e+00,4.998824e-01
-m256,sqrtps,latency,1.803890e+01,5.543576e-02
-m256,sqrtps,throughput,1.405448e+01,7.115170e-02
-m256,vperm2f128,latency,3.004124e+00,3.328757e-01
-m256,vperm2f128,throughput,1.000473e+00,9.995272e-01
-m256,pxor,latency,2.892222e-01,3.457549e+00
-m256,pxor,throughput,2.818246e-01,3.548306e+00
-m256,paddd,latency,1.000596e+00,9.994043e-01
-m256,paddd,throughput,5.004740e-01,1.998106e+00
-m256,vpermps,latency,3.011563e+00,3.320535e-01
-m256,vpermps,throughput,1.012567e+00,9.875889e-01
-m256,vpermpd,latency,3.007543e+00,3.324973e-01
-m256,vpermpd,throughput,1.000590e+00,9.994100e-01
-m256,vpmovsxwd,latency,3.010375e+00,3.321845e-01
-m256,vpmovsxwd,throughput,1.000532e+00,9.994681e-01
-m256,vpgatherdd,latency,2.115588e+01,4.726819e-02
-m256,vpgatherdd,throughput,6.070154e+00,1.647405e-01
-m256,gather32(<ld+ins>x8 + perm),latency,1.706441e+01,5.860149e-02
-m256,gather32(<ld+ins>x8 + perm),throughput,8.026464e+00,1.245879e-01
-m256,vgatherdpd,latency,1.818205e+01,5.499930e-02
-m256,vgatherdpd,throughput,5.067228e+00,1.973466e-01
-m256,gather64(<ld+ins>x4 + perm),latency,4.012984e+00,2.491911e-01
-m256,gather64(<ld+ins>x4 + perm),throughput,4.000770e+00,2.499519e-01
-m256,vfmaps,latency,5.007108e+00,1.997161e-01
-m256,vfmaps,throughput,5.004792e-01,1.998085e+00
-m256,vfmapd,latency,5.004256e+00,1.998299e-01
-m256,vfmapd,throughput,5.005574e-01,1.997773e+00
+Intel(R) Xeon(R) CPU D-1571 @ 1.30GHz
+reg64,add,latency,1.004973e+00,9.950517e-01
+reg64,add,throughput,2.674311e-01,3.739280e+00
+reg64,lea,latency,1.005065e+00,9.949601e-01
+reg64,lea,throughput,5.026581e-01,1.989424e+00
+reg64,xor dst,dst,latency,2.673273e-01,3.740733e+00
+reg64,xor dst,dst,throughput,2.681216e-01,3.729651e+00
+reg64,xor,latency,2.667935e-01,3.748217e+00
+reg64,xor,throughput,2.669752e-01,3.745667e+00
+reg64,load,latency,5.018225e+00,1.992736e-01
+reg64,load,throughput,6.271194e-01,1.594593e+00
+reg64,crc32,latency,3.008708e+00,3.323686e-01
+reg64,crc32,throughput,1.004407e+00,9.956128e-01
+reg64,store [mem+0]->load[mem+0],latency,1.229809e+01,8.131346e-02
+reg64,store [mem+0]->load[mem+0],throughput,1.263498e+00,7.914536e-01
+reg64,store [mem+0]->load[mem+1],latency,2.005496e+01,4.986297e-02
+reg64,store [mem+0]->load[mem+1],throughput,1.403018e+01,7.127491e-02
+m128,pxor,latency,2.789192e-01,3.585267e+00
+m128,pxor,throughput,2.788330e-01,3.586377e+00
+m128,padd,latency,1.001848e+00,9.981556e-01
+m128,padd,throughput,5.016780e-01,1.993310e+00
+m128,pmuldq,latency,5.007053e+00,1.997183e-01
+m128,pmuldq,throughput,1.004096e+00,9.959206e-01
+m128,loadps,throughput,5.022187e-01,1.991165e+00
+m128,loadps->movq,latency,7.015473e+00,1.425421e-01
+m128,movq->movq,latency,2.005896e+00,4.985304e-01
+m128,movq->movq,throughput,1.003348e+00,9.966633e-01
+m128,xorps,latency,2.780946e-01,3.595899e+00
+m128,xorps,throughput,2.802274e-01,3.568530e+00
+m128,addps,latency,3.006279e+00,3.326371e-01
+m128,addps,throughput,1.002947e+00,9.970618e-01
+m128,mulps,latency,3.006905e+00,3.325678e-01
+m128,mulps,throughput,5.009253e-01,1.996306e+00
+m128,divps,latency,1.101906e+01,9.075183e-02
+m128,divps,throughput,5.018333e+00,1.992694e-01
+m128,divpd,latency,1.001912e+01,9.980915e-02
+m128,divpd,throughput,8.019880e+00,1.246902e-01
+m128,rsqrtps,latency,5.007374e+00,1.997055e-01
+m128,rsqrtps,throughput,1.003458e+00,9.965543e-01
+m128,rcpps,latency,5.007036e+00,1.997190e-01
+m128,rcpps,throughput,1.003550e+00,9.964626e-01
+m128,blendps,latency,1.002340e+00,9.976658e-01
+m128,blendps,throughput,3.348607e-01,2.986316e+00
+m128,blendvps,latency,2.005733e+00,4.985708e-01
+m128,blendvps,throughput,2.005913e+00,4.985262e-01
+m128,pshufb,latency,1.003750e+00,9.962642e-01
+m128,pshufb,throughput,1.003409e+00,9.966023e-01
+m128,shufps,latency,1.002875e+00,9.971337e-01
+m128,shufps,throughput,1.003995e+00,9.960211e-01
+m128,pmullw,latency,5.008149e+00,1.996746e-01
+m128,pmullw,throughput,1.002987e+00,9.970216e-01
+m128,phaddd,latency,3.006421e+00,3.326215e-01
+m128,phaddd,throughput,2.006900e+00,4.982809e-01
+m128,haddps,latency,3.008436e+00,3.323987e-01
+m128,haddps,throughput,2.004859e+00,4.987882e-01
+m128,pinsrd,latency,2.006613e+00,4.983521e-01
+m128,pinsrd,throughput,2.005743e+00,4.985682e-01
+m128,pinsrd->pexr,latency,4.008697e+00,2.494576e-01
+m128,dpps,latency,1.202914e+01,8.313149e-02
+m128,dpps,throughput,2.322817e+00,4.305117e-01
+m128,cvtps2dq,latency,3.007693e+00,3.324808e-01
+m128,cvtps2dq,throughput,1.003005e+00,9.970039e-01
+reg64,popcnt,latency,3.005474e+00,3.327262e-01
+reg64,popcnt,throughput,1.002859e+00,9.971488e-01
+m128,aesenc,latency,7.009787e+00,1.426577e-01
+m128,aesenc,throughput,1.002855e+00,9.971530e-01
+m128,aesenclast,latency,7.010405e+00,1.426451e-01
+m128,aesenclast,throughput,1.003355e+00,9.966562e-01
+m128,aesdec,latency,7.010376e+00,1.426457e-01
+m128,aesdec,throughput,1.002932e+00,9.970763e-01
+m128,aesdeclast,latency,7.009791e+00,1.426576e-01
+m128,aesdeclast,throughput,1.003441e+00,9.965703e-01
+m256,movaps [mem],latency,1.004108e+00,9.959086e-01
+m256,movaps [mem],throughput,5.020305e-01,1.991911e+00
+m256,vmovdqu [mem+1],latency,1.003395e+00,9.966166e-01
+m256,vmovdqu [mem+1],throughput,5.025395e-01,1.989893e+00
+m256,vmovdqu [mem+63] (cross cache),latency,1.003030e+00,9.969792e-01
+m256,vmovdqu [mem+63] (cross cache),throughput,1.002858e+00,9.971501e-01
+m256,vmovdqu [mem+2MB-1] (cross page),latency,3.105357e+01,3.220242e-02
+m256,vmovdqu [mem+2MB-1] (cross page),throughput,3.104719e+01,3.220904e-02
+m256,xorps,latency,2.785920e-01,3.589478e+00
+m256,xorps,throughput,2.789832e-01,3.584445e+00
+m256,mulps,latency,3.007709e+00,3.324790e-01
+m256,mulps,throughput,5.020894e-01,1.991677e+00
+m256,addps,latency,3.008182e+00,3.324267e-01
+m256,addps,throughput,1.003634e+00,9.963788e-01
+m256,divps,latency,1.719296e+01,5.816334e-02
+m256,divps,throughput,1.009180e+01,9.909030e-02
+m256,divpd,latency,1.908553e+01,5.239571e-02
+m256,divpd,throughput,1.616236e+01,6.187217e-02
+m256,rsqrtps,latency,7.012768e+00,1.425970e-01
+m256,rsqrtps,throughput,2.005612e+00,4.986009e-01
+m256,rcpps,latency,7.013066e+00,1.425910e-01
+m256,rcpps,throughput,2.005002e+00,4.987525e-01
+m256,sqrtps,latency,1.808513e+01,5.529404e-02
+m256,sqrtps,throughput,1.409353e+01,7.095456e-02
+m256,vperm2f128,latency,3.007397e+00,3.325135e-01
+m256,vperm2f128,throughput,1.002604e+00,9.974024e-01
+m256,pxor,latency,2.787321e-01,3.587674e+00
+m256,pxor,throughput,2.793477e-01,3.579768e+00
+m256,paddd,latency,1.001859e+00,9.981442e-01
+m256,paddd,throughput,5.016569e-01,1.993394e+00
+m256,vpermps,latency,3.005741e+00,3.326967e-01
+m256,vpermps,throughput,1.002794e+00,9.972137e-01
+m256,vpermpd,latency,3.005995e+00,3.326686e-01
+m256,vpermpd,throughput,1.003387e+00,9.966248e-01
+m256,vpmovsxwd,latency,3.005906e+00,3.326784e-01
+m256,vpmovsxwd,throughput,1.002630e+00,9.973773e-01
+m256,vpgatherdd,latency,2.115873e+01,4.726182e-02
+m256,vpgatherdd,throughput,6.039604e+00,1.655738e-01
+m256,gather32(<ld+ins>x8 + perm),latency,1.703337e+01,5.870827e-02
+m256,gather32(<ld+ins>x8 + perm),throughput,8.018380e+00,1.247135e-01
+m256,vgatherdpd,latency,1.819960e+01,5.494625e-02
+m256,vgatherdpd,throughput,5.037440e+00,1.985135e-01
+m256,gather64(<ld+ins>x4 + perm),latency,1.217309e+01,8.214839e-02
+m256,gather64(<ld+ins>x4 + perm),throughput,4.008251e+00,2.494854e-01
+m256,vpshufb,latency,1.003590e+00,9.964232e-01
+m256,vpshufb,throughput,1.003579e+00,9.964335e-01
+m256,vfmaps,latency,5.007607e+00,1.996962e-01
+m256,vfmaps,throughput,5.009853e-01,1.996067e+00
+m256,vfmapd,latency,5.008733e+00,1.996513e-01
+m256,vfmapd,throughput,5.014691e-01,1.994141e+00
+m128,vfmaps,latency,5.009474e+00,1.996218e-01
+m128,vfmaps,throughput,5.014542e-01,1.994200e+00
+m128,vfmapd,latency,5.008544e+00,1.996588e-01
+m128,vfmapd,throughput,5.010346e-01,1.995870e+00
