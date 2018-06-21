@@ -1,4 +1,4 @@
-class,inst,l/t,ipc,cpi
+class,inst,l/t,cpi,ipc
 "reg64","add","latency","1.009961e+00","9.901376e-01"
 "reg64","add","throughput","3.522396e-01","2.838977e+00"
 "reg64","lea","latency","1.001932e+00","9.980721e-01"

@@ -745,7 +745,7 @@ main(int argc, char **argv)
 
     logs = fopen(path.c_str(), "wb");
     fprintf(logs, 
-            "class,inst,l/t,ipc,cpi\n");
+            "class,inst,l/t,cpi,ipc\n");
 
     if (!output_csv) {
         printf("== latency/throughput ==\n");
