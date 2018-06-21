@@ -555,16 +555,25 @@ struct Gen
 };
     
 
+template <typename RegType> int get_num_insn(void) {
+    RegMap<RegType> rm;
+    if (rm.vec_reg()) {
+        return 36;
+    } else {
+        return 64;
+    }
+ }
+
 template <typename RegType, typename F>
 void
 lt(const char *name,
    const char *on,
    F f,
    int num_loop,
-   int num_insn,
    enum lt_op o,
    enum operand_type ot)
 {
+    int num_insn = get_num_insn<RegType>();
 
     Gen<RegType,F> g(f, num_loop, num_insn, o, ot);
     typedef void (*func_t)(void);
@@ -596,7 +605,7 @@ lt(const char *name,
             (num_insn * num_loop)/(double)(e-b));
 
     if (output_csv) {
-        printf("%s,%s,%s,%e,%e\n",
+        printf("\"%s\",\"%s\",\"%s\",\"%e\",\"%e\"\n",
                RegMap<RegType>().name,
                name, on,
                (e-b)/(double)(num_insn * num_loop), 
@@ -612,17 +621,16 @@ lt(const char *name,
 }           
 
 #define NUM_LOOP (16384*8)
-#define NUM_INSN 36
 
 template <typename RegType, typename F>
 void
 run(const char *name, F f, bool kill_dep, enum operand_type ot)
 {
-    lt<RegType>(name, "latency", f, NUM_LOOP, NUM_INSN, LT_LATENCY, ot);
+    lt<RegType>(name, "latency", f, NUM_LOOP, LT_LATENCY, ot);
     if (kill_dep) {
-        lt<RegType>(name, "throughput", f, NUM_LOOP, NUM_INSN, LT_THROUGHPUT_KILLDEP, ot);
+        lt<RegType>(name, "throughput", f, NUM_LOOP, LT_THROUGHPUT_KILLDEP, ot);
     } else {
-        lt<RegType>(name, "throughput", f, NUM_LOOP, NUM_INSN, LT_THROUGHPUT, ot);
+        lt<RegType>(name, "throughput", f, NUM_LOOP, LT_THROUGHPUT, ot);
     }
 }
 
@@ -630,11 +638,11 @@ template <typename RegType, typename F_t, typename F_l>
 void
 run_latency(const char *name, F_t f_t, F_l f_l, bool kill_dep, enum operand_type ot)
 {
-    lt<RegType>(name, "latency", f_l, NUM_LOOP, NUM_INSN, LT_LATENCY, ot);
+    lt<RegType>(name, "latency", f_l, NUM_LOOP, LT_LATENCY, ot);
     if (kill_dep) {
-        lt<RegType>(name, "throughput", f_t, NUM_LOOP, NUM_INSN, LT_THROUGHPUT_KILLDEP, ot);
+        lt<RegType>(name, "throughput", f_t, NUM_LOOP, LT_THROUGHPUT_KILLDEP, ot);
     } else {
-        lt<RegType>(name, "throughput", f_t, NUM_LOOP, NUM_INSN, LT_THROUGHPUT, ot);
+        lt<RegType>(name, "throughput", f_t, NUM_LOOP, LT_THROUGHPUT, ot);
     }
 }
 
@@ -642,7 +650,7 @@ template <typename RegType, typename F_l>
 void
 run_latency_only(const char *name, F_l f_l, bool kill_dep, enum operand_type ot)
 {
-    lt<RegType>(name, "latency", f_l, NUM_LOOP, NUM_INSN, LT_LATENCY, ot);
+    lt<RegType>(name, "latency", f_l, NUM_LOOP, LT_LATENCY, ot);
 }
 
 
@@ -651,9 +659,9 @@ void
 run_throghput_only(const char *name, F_t f_t,bool kill_dep, enum operand_type ot)
 {
     if (kill_dep) {
-        lt<RegType>(name, "throughput", f_t, NUM_LOOP, NUM_INSN, LT_THROUGHPUT_KILLDEP, ot);
+        lt<RegType>(name, "throughput", f_t, NUM_LOOP, LT_THROUGHPUT_KILLDEP, ot);
     } else {
-        lt<RegType>(name, "throughput", f_t, NUM_LOOP, NUM_INSN, LT_THROUGHPUT, ot);
+        lt<RegType>(name, "throughput", f_t, NUM_LOOP, LT_THROUGHPUT, ot);
     }
 }
 
@@ -747,15 +755,30 @@ main(int argc, char **argv)
     GEN(Reg64, "load", (g->mov(dst, g->ptr[src + g->rdx])), false, OT_INT);
     GEN(Reg64, "crc32", (g->crc32(dst, src)), false, OT_INT);
 
+    GEN(Reg64, "store [mem+0]->load[mem+0]", 
+        (g->mov(g->ptr[src+g->rdx],g->rdi)) ; (g->mov(dst, g->ptr[g->rdx])),
+        false, OT_INT);
+
+    GEN(Reg64, "store [mem+0]->load[mem+1]", 
+        (g->mov(g->ptr[src+g->rdx],g->rdi)) ; (g->mov(dst, g->ptr[g->rdx + 1])),
+        false, OT_INT);
+
     GEN(Xmm, "pxor", (g->pxor(dst, src)), false, OT_INT);
     GEN(Xmm, "padd", (g->paddd(dst, src)), false, OT_INT);
     GEN(Xmm, "pmuldq", (g->pmuldq(dst, src)), false, OT_INT);
 
     /* 128 */
-    GEN_latency(Xmm, "loadps",
-                (g->movaps(dst, g->ptr[g->rdx])),
-                (g->movaps(dst, g->ptr[g->rdx + g->rdi])); (g->movq(g->rdi, dst)); ,
-                false, OT_INT);
+    GEN_throughput_only(Xmm, "loadps",
+                        (g->movaps(dst, g->ptr[g->rdx])),
+                        false, OT_INT);
+    
+    GEN_latency_only(Xmm, "loadps->movq",
+                     (g->movaps(dst, g->ptr[g->rdx + g->rdi])); (g->movq(g->rdi, dst));,
+                     false, OT_INT);
+
+    GEN(Xmm, "movq->movq",
+        (g->movq(g->rdi,src));(g->movq(dst,g->rdi));,
+        false, OT_INT);
 
     GEN(Xmm, "xorps", (g->xorps(dst, src)), false, OT_FP32);
     GEN(Xmm, "addps", (g->addps(dst, src)), false, OT_FP32);
@@ -775,7 +798,8 @@ main(int argc, char **argv)
     GEN(Xmm, "phaddd", (g->phaddd(dst, src)), false, OT_INT);
     GEN(Xmm, "haddps", (g->phaddd(dst, src)), false, OT_FP32);
 
-    GEN_throughput_only(Xmm, "pinsrd", (g->pinsrb(dst, g->edx, 0)), false, OT_INT);
+    GEN(Xmm, "pinsrd", 
+        (g->pinsrb(dst, g->edx, 0)), false, OT_INT);
     GEN_latency_only(Xmm, "pinsrd->pexr", (g->pinsrb(dst, g->edx, 0));(g->pextrd(g->edx,dst,0)), false, OT_INT);
     GEN(Xmm, "dpps", (g->dpps(dst, src, 0xff)), false, OT_FP32);
     GEN(Xmm, "cvtps2dq", (g->cvtps2dq(dst, src)), false, OT_FP32);
@@ -928,8 +952,8 @@ main(int argc, char **argv)
                         (g->vperm2i128(g->ymm2,g->ymm2,g->ymm3,0));,
 
                         /* latency */
-                        (g->vmovq(g->xmm2, g->ptr[g->rdx]));
-                        (g->vmovq(g->xmm3, g->ptr[g->rdx]));
+                        (g->vmovq(g->xmm2, g->ptr[g->rdx + g->rdi]));
+                        (g->vmovq(g->xmm3, g->ptr[g->rdx + g->rdi]));
                         (g->vpinsrq(g->xmm2, g->xmm2, g->ptr[g->rdx + 8], 1));
                         (g->vpinsrd(g->xmm3, g->xmm3, g->ptr[g->rdx + 8], 1));
                         (g->vperm2i128(g->ymm2,g->ymm2,g->ymm3,0));

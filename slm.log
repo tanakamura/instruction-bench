@@ -1,0 +1,65 @@
+      Intel(R) Celeron(R) CPU  N2807  @ 1.58GHz
+== latency/throughput ==
+   reg64:                                     add:   latency: CPI=    1.03, IPC=    0.97
+   reg64:                                     add:throughput: CPI=    0.53, IPC=    1.88
+   reg64:                                     lea:   latency: CPI=    1.02, IPC=    0.98
+   reg64:                                     lea:throughput: CPI=    0.54, IPC=    1.84
+   reg64:                             xor dst,dst:   latency: CPI=    1.03, IPC=    0.97
+   reg64:                             xor dst,dst:throughput: CPI=    0.53, IPC=    1.88
+   reg64:                                     xor:   latency: CPI=    1.04, IPC=    0.96
+   reg64:                                     xor:throughput: CPI=    0.54, IPC=    1.84
+   reg64:                                    load:   latency: CPI=    3.03, IPC=    0.33
+   reg64:                                    load:throughput: CPI=    1.01, IPC=    0.99
+   reg64:                                   crc32:   latency: CPI=    6.03, IPC=    0.17
+   reg64:                                   crc32:throughput: CPI=    6.03, IPC=    0.17
+   reg64:              store [mem+0]->load[mem+0]:   latency: CPI=    4.04, IPC=    0.25
+   reg64:              store [mem+0]->load[mem+0]:throughput: CPI=    2.04, IPC=    0.49
+   reg64:              store [mem+0]->load[mem+1]:   latency: CPI=   14.09, IPC=    0.07
+   reg64:              store [mem+0]->load[mem+1]:throughput: CPI=   11.52, IPC=    0.09
+    m128:                                    pxor:   latency: CPI=    0.58, IPC=    1.72
+    m128:                                    pxor:throughput: CPI=    0.56, IPC=    1.80
+    m128:                                    padd:   latency: CPI=    1.00, IPC=    1.00
+    m128:                                    padd:throughput: CPI=    0.56, IPC=    1.80
+    m128:                                  pmuldq:   latency: CPI=    6.03, IPC=    0.17
+    m128:                                  pmuldq:throughput: CPI=    4.17, IPC=    0.24
+    m128:                                  loadps:throughput: CPI=    1.02, IPC=    0.98
+    m128:                            loadps->movq:   latency: CPI=    8.05, IPC=    0.12
+    m128:                              movq->movq:   latency: CPI=    7.05, IPC=    0.14
+    m128:                              movq->movq:throughput: CPI=    7.04, IPC=    0.14
+    m128:                                   xorps:   latency: CPI=    0.58, IPC=    1.73
+    m128:                                   xorps:throughput: CPI=    0.56, IPC=    1.80
+    m128:                                   addps:   latency: CPI=    3.02, IPC=    0.33
+    m128:                                   addps:throughput: CPI=    1.03, IPC=    0.97
+    m128:                                   mulps:   latency: CPI=    5.03, IPC=    0.20
+    m128:                                   mulps:throughput: CPI=    2.02, IPC=    0.50
+    m128:                                   divps:   latency: CPI=   27.18, IPC=    0.04
+    m128:                                   divps:throughput: CPI=   27.17, IPC=    0.04
+    m128:                                   divpd:   latency: CPI=   27.16, IPC=    0.04
+    m128:                                   divpd:throughput: CPI=   27.16, IPC=    0.04
+    m128:                                 rsqrtps:   latency: CPI=    9.05, IPC=    0.11
+    m128:                                 rsqrtps:throughput: CPI=    8.05, IPC=    0.12
+    m128:                                   rcpps:   latency: CPI=    9.07, IPC=    0.11
+    m128:                                   rcpps:throughput: CPI=    8.05, IPC=    0.12
+    m128:                                 blendps:   latency: CPI=    6.02, IPC=    0.17
+    m128:                                 blendps:throughput: CPI=    4.17, IPC=    0.24
+    m128:                                blendvps:   latency: CPI=    7.08, IPC=    0.14
+    m128:                                blendvps:throughput: CPI=    9.03, IPC=    0.11
+    m128:                                  pshufb:   latency: CPI=    8.08, IPC=    0.12
+    m128:                                  pshufb:throughput: CPI=    7.08, IPC=    0.14
+    m128:                                  shufps:   latency: CPI=    1.01, IPC=    0.99
+    m128:                                  shufps:throughput: CPI=    1.00, IPC=    1.00
+    m128:                                  pmullw:   latency: CPI=    5.04, IPC=    0.20
+    m128:                                  pmullw:throughput: CPI=    2.03, IPC=    0.49
+    m128:                                  phaddd:   latency: CPI=    9.10, IPC=    0.11
+    m128:                                  phaddd:throughput: CPI=    8.08, IPC=    0.12
+    m128:                                  haddps:   latency: CPI=    9.07, IPC=    0.11
+    m128:                                  haddps:throughput: CPI=    8.08, IPC=    0.12
+    m128:                                  pinsrd:   latency: CPI=    6.01, IPC=    0.17
+    m128:                                  pinsrd:throughput: CPI=    4.18, IPC=    0.24
+    m128:                            pinsrd->pexr:   latency: CPI=   13.11, IPC=    0.08
+    m128:                                    dpps:   latency: CPI=   15.09, IPC=    0.07
+    m128:                                    dpps:throughput: CPI=   13.12, IPC=    0.08
+    m128:                                cvtps2dq:   latency: CPI=    5.03, IPC=    0.20
+    m128:                                cvtps2dq:throughput: CPI=    2.02, IPC=    0.50
+   reg64:                                  popcnt:   latency: CPI=    3.05, IPC=    0.33
+   reg64:                                  popcnt:throughput: CPI=    1.15, IPC=    0.87
