@@ -109,6 +109,12 @@ def main():
            'rel'))
     print("---------------------------------+---------------------------------------------------------")
 
+    l_list = list(l_list.keys())
+    t_list = list(t_list.keys())
+
+    l_list.sort()
+    t_list.sort()
+
     for i in l_list:
         l_row = None
         r_row = None
