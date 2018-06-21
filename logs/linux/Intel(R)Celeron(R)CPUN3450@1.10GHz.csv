@@ -1,0 +1,71 @@
+reg64,add,latency,1.008534e+00,9.915385e-01
+reg64,add,throughput,3.522638e-01,2.838782e+00
+reg64,lea,latency,1.001326e+00,9.986754e-01
+reg64,lea,throughput,3.521388e-01,2.839790e+00
+reg64,xor dst,dst,latency,3.523158e-01,2.838363e+00
+reg64,xor dst,dst,throughput,3.521376e-01,2.839799e+00
+reg64,xor,latency,3.520403e-01,2.840584e+00
+reg64,xor,throughput,3.522532e-01,2.838867e+00
+reg64,load,latency,3.003654e+00,3.329278e-01
+reg64,load,throughput,1.001063e+00,9.989385e-01
+reg64,crc32,latency,3.003450e+00,3.329505e-01
+reg64,crc32,throughput,1.249486e+00,8.003288e-01
+reg64,store [mem+0]->load[mem+0],latency,5.007766e+00,1.996899e-01
+reg64,store [mem+0]->load[mem+0],throughput,1.095698e+00,9.126598e-01
+reg64,store [mem+0]->load[mem+1],latency,1.299222e+01,7.696912e-02
+reg64,store [mem+0]->load[mem+1],throughput,9.357437e+00,1.068669e-01
+m128,pxor,latency,5.008403e-01,1.996644e+00
+m128,pxor,throughput,5.001545e-01,1.999382e+00
+m128,padd,latency,1.001372e+00,9.986294e-01
+m128,padd,throughput,5.013161e-01,1.994750e+00
+m128,pmuldq,latency,4.007571e+00,2.495277e-01
+m128,pmuldq,throughput,1.003446e+00,9.965663e-01
+m128,loadps,throughput,1.002452e+00,9.975542e-01
+m128,loadps->movq,latency,8.018678e+00,1.247088e-01
+m128,movq->movq,latency,8.012039e+00,1.248122e-01
+m128,movq->movq,throughput,2.215839e+00,4.512963e-01
+m128,xorps,latency,5.010463e-01,1.995824e+00
+m128,xorps,throughput,5.007557e-01,1.996982e+00
+m128,addps,latency,3.003711e+00,3.329215e-01
+m128,addps,throughput,1.001827e+00,9.981761e-01
+m128,mulps,latency,4.008101e+00,2.494947e-01
+m128,mulps,throughput,1.001904e+00,9.980994e-01
+m128,divps,latency,2.002947e+01,4.992644e-02
+m128,divps,throughput,1.903143e+01,5.254466e-02
+m128,divpd,latency,2.002808e+01,4.992989e-02
+m128,divpd,throughput,1.903650e+01,5.253066e-02
+m128,rsqrtps,latency,9.013125e+00,1.109493e-01
+m128,rsqrtps,throughput,6.038987e+00,1.655907e-01
+m128,rcpps,latency,9.013938e+00,1.109393e-01
+m128,rcpps,throughput,6.035311e+00,1.656915e-01
+m128,blendps,latency,1.002723e+00,9.972848e-01
+m128,blendps,throughput,5.008117e-01,1.996759e+00
+m128,blendvps,latency,4.034546e+00,2.478594e-01
+m128,blendvps,throughput,5.978655e+00,1.672617e-01
+m128,pshufb,latency,1.001275e+00,9.987262e-01
+m128,pshufb,throughput,1.001240e+00,9.987620e-01
+m128,shufps,latency,1.000957e+00,9.990438e-01
+m128,shufps,throughput,5.010071e-01,1.995980e+00
+m128,pmullw,latency,4.003796e+00,2.497630e-01
+m128,pmullw,throughput,1.000910e+00,9.990910e-01
+m128,phaddd,latency,4.038377e+00,2.476242e-01
+m128,phaddd,throughput,4.032095e+00,2.480100e-01
+m128,haddps,latency,4.036404e+00,2.477453e-01
+m128,haddps,throughput,4.037277e+00,2.476917e-01
+m128,pinsrd,latency,1.032374e+00,9.686413e-01
+m128,pinsrd,throughput,1.029211e+00,9.716184e-01
+m128,pinsrd->pexr,latency,8.014094e+00,1.247802e-01
+m128,dpps,latency,1.380554e+01,7.243471e-02
+m128,dpps,throughput,1.003382e+01,9.966295e-02
+m128,cvtps2dq,latency,4.002394e+00,2.498505e-01
+m128,cvtps2dq,throughput,1.000400e+00,9.996003e-01
+reg64,popcnt,latency,3.000460e+00,3.332823e-01
+reg64,popcnt,throughput,1.246366e+00,8.023326e-01
+m128,aesenc,latency,6.000866e+00,1.666426e-01
+m128,aesenc,throughput,2.001113e+00,4.997219e-01
+m128,aesenclast,latency,6.003132e+00,1.665797e-01
+m128,aesenclast,throughput,2.000720e+00,4.998200e-01
+m128,aesdec,latency,6.001216e+00,1.666329e-01
+m128,aesdec,throughput,2.000352e+00,4.999120e-01
+m128,aesdeclast,latency,6.001086e+00,1.666365e-01
+m128,aesdeclast,throughput,2.001195e+00,4.997014e-01
