@@ -5,6 +5,7 @@
 #include <string.h>
 
 static bool output_csv = false;
+static FILE *logs;
 
 /* x64 regisuter usage
  *  http://msdn.microsoft.com/en-US/library/9z1stfyw(v=vs.80).aspx
@@ -58,6 +59,7 @@ cycle_counter_init(void)
     attr.type = PERF_TYPE_HARDWARE;
     attr.size = sizeof(attr);
     attr.config = PERF_COUNT_HW_CPU_CYCLES;
+    attr.exclude_kernel = 1;
 
     perf_fd = perf_event_open(&attr, 0, -1, -1, 0);
     if (perf_fd == -1) {
@@ -586,6 +588,13 @@ lt(const char *name,
     exec();
     long long e = read_cycle();
 
+    fprintf(logs,
+            "%s,%s,%s,%e,%e\n",
+            RegMap<RegType>().name,
+            name, on,
+            (e-b)/(double)(num_insn * num_loop), 
+            (num_insn * num_loop)/(double)(e-b));
+
     if (output_csv) {
         printf("%s,%s,%s,%e,%e\n",
                RegMap<RegType>().name,
@@ -695,14 +704,38 @@ main(int argc, char **argv)
     typedef unsigned int cpuid_t;
 #endif
 
+#ifdef _WIN32
+    std::string path = "logs/w32/";
+#else
+    std::string path = "logs/linux/";
+
+#endif
+
     {
         cpuid_t data[4*3+1];
+        char data_nospace[4*3*4+1];
+
         x_cpuid(data+4*0, 0x80000002);
         x_cpuid(data+4*1, 0x80000003);
         x_cpuid(data+4*2, 0x80000004);
         data[12] = 0;
         puts((char*)data);
+
+        char *d0 = (char*)data;
+        int out = 0;
+
+        for (int i=0; i<4*3*4; i++) {
+            if (d0[i] != ' ') {
+                data_nospace[out++] = d0[i];
+            }
+        }
+        data_nospace[out] = '\0';
+
+        path += data_nospace;
+        path += ".csv";
     }
+
+    logs = fopen(path.c_str(), "wb");
 
     if (!output_csv) {
         printf("== latency/throughput ==\n");
@@ -951,4 +984,6 @@ main(int argc, char **argv)
                         (g->bndstx(g->ptr[g->rdx], g->bnd0)),
                         false, OT_INT);
 #endif
+
+    fclose(logs);
 }
