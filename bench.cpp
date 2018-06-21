@@ -598,7 +598,7 @@ lt(const char *name,
     long long e = read_cycle();
 
     fprintf(logs,
-            "%s,%s,%s,%e,%e\n",
+            "\"%s\",\"%s\",\"%s\",\"%e\",\"%e\"\n",
             RegMap<RegType>().name,
             name, on,
             (e-b)/(double)(num_insn * num_loop), 
@@ -744,6 +744,8 @@ main(int argc, char **argv)
     }
 
     logs = fopen(path.c_str(), "wb");
+    fprintf(logs, 
+            "class,inst,l/t,ipc,cpi\n");
 
     if (!output_csv) {
         printf("== latency/throughput ==\n");
