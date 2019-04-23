@@ -767,9 +767,30 @@ main(int argc, char **argv)
 
     GEN(Xmm, "pinsrd", 
         (g->pinsrb(dst, g->edx, 0)), false, OT_INT);
-    GEN_latency_only(Xmm, "pinsrd->pexr", (g->pinsrb(dst, g->edx, 0));(g->pextrd(g->edx,dst,0)), false, OT_INT);
+    GEN_latency_only(Xmm, "pinsrd->pextr", (g->pinsrb(dst, g->edx, 0));(g->pextrd(g->edx,dst,0)), false, OT_INT);
     GEN(Xmm, "dpps", (g->dpps(dst, src, 0xff)), false, OT_FP32);
     GEN(Xmm, "cvtps2dq", (g->cvtps2dq(dst, src)), false, OT_FP32);
+
+    GEN_latency(Xmm, "movaps [mem]",
+                (g->movaps(dst, g->ptr[g->rdx])),
+                (g->movaps(dst, g->ptr[g->rdx + g->rdi])); (g->movq(g->rdi, dst)); ,
+                false, OT_FP32);
+
+    GEN_latency(Xmm, "movdqu [mem+1]",
+                (g->movdqu(dst, g->ptr[g->rdx + 1])),
+                (g->movdqu(dst, g->ptr[g->rdx + g->rdi + 1])); (g->movq(g->rdi, dst)); ,
+                false, OT_FP32);
+
+    GEN_latency(Xmm, "movdqu [mem+63] (cross cache)",
+                (g->movdqu(dst, g->ptr[g->rdx + 63])),
+                (g->movdqu(dst, g->ptr[g->rdx + g->rdi + 63])); (g->movq(g->rdi, dst)); ,
+                false, OT_FP32);
+
+    GEN_latency(Xmm, "movdqu [mem+2MB-1] (cross page)",
+                (g->movdqu(dst, g->ptr[g->rdx + (2048*1024-1)])),
+                (g->movdqu(dst, g->ptr[g->rdx + g->rdi + (2048*1024-1)])); (g->movq(g->rdi, dst)); ,
+                false, OT_FP32);
+
 
     {
         bool have_avx = false;
