@@ -833,6 +833,7 @@ main(int argc, char **argv)
         bool have_avx2 = false;
         bool have_fma = false;
         bool have_avx512f = false;
+        bool have_avx512er = false;
         bool have_popcnt = false;
         bool have_aes = false;
 
@@ -848,6 +849,10 @@ main(int argc, char **argv)
 
         if (reg[1] & (1<<16)) {
             have_avx512f = true;
+        }
+
+        if (reg[1] & (1<<27)) {
+            have_avx512er = true;
         }
 
 #ifdef _WIN32
@@ -1004,9 +1009,12 @@ main(int argc, char **argv)
             GEN(Zmm, "vpconflictd", (g->vpconflictd(dst, src)), false, OT_FP32);
             GEN(Zmm, "vpermt2d", (g->vpermt2d(dst, src, src)), false, OT_FP32);
             GEN(Zmm, "vshufps", (g->vshufps(dst, src, src, 0)), false, OT_FP32);
-            GEN(Zmm, "vrcp28pd", (g->vrcp28pd(dst, src)), false, OT_FP32);
             GEN(Zmm, "vrcp14pd", (g->vrcp14pd(dst, src)), false, OT_FP32);
             GEN(Zmm, "vpternlogd", (g->vpternlogd(dst, src, src, 0)), false, OT_FP32);
+        }
+
+        if (have_avx512er) {
+            GEN(Zmm, "vrcp28pd", (g->vrcp28pd(dst, src)), false, OT_FP32);
         }
     }
 
