@@ -204,7 +204,7 @@ main(int argc, char **argv)
     }
 
     if (info.have_pclmulqdq) {
-        GEN(Xmm, "plcmulqdq", (g->pclmulqdq(dst,src,0)), false, OT_INT);
+        GEN(Xmm, "pclmulqdq", (g->pclmulqdq(dst,src,0)), false, OT_INT);
     }
 
     test_mpx();

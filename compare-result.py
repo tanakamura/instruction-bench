@@ -22,17 +22,18 @@ def load_csv(path, l_inst, t_inst):
         for row in r:
             lt = row['l/t']
             inst = row['inst']
+            clas = row['class']
 
             if lt == 'latency':
-                result.latency[inst] = row
-                l_inst[inst] = True
+                result.latency[(clas,inst)] = row
+                l_inst[(clas,inst)] = True
             else:
-                result.throughput[inst] = row
-                t_inst[inst] = True
+                result.throughput[(clas,inst)] = row
+                t_inst[(clas,inst)] = True
 
     return result
 
-def dump_row(l_row, r_row, inst):
+def dump_row(l_row, r_row, clas, inst):
     ratio = 'N/A'
     l_val = 'N/A'
     r_val = 'N/A'
@@ -47,8 +48,8 @@ def dump_row(l_row, r_row, inst):
         ipc_ratio = (l_ipc / r_ipc)-1
         cpi_ratio = (l_cpi / r_cpi)-1
 
-        print("%32s | %7.2f-%-7.2f (%6.1f[%%]), %7.2f-%-7.2f (%6.1f[%%])"%
-              (inst,
+        print("%8s %32s | %7.2f-%-7.2f (%6.1f[%%]), %7.2f-%-7.2f (%6.1f[%%])"%
+              (clas, inst,
                l_ipc, r_ipc, ipc_ratio * 100,
                l_cpi, r_cpi, cpi_ratio * 100))
 
@@ -98,16 +99,17 @@ def main():
     l = load_csv(left, l_list, t_list)
     r = load_csv(right, l_list, t_list)
 
-    print("==== LATENCY ==============================================================================")
-    print("%32s | %7s%8s (%6s[%%]), %7s%8s (%6s[%%])"%
-          ('instruction',
+    print("============= LATENCY ==============================================================================")
+    print("%8s %32s | %7s%8s (%6s[%%]), %7s%8s (%6s[%%])"%
+          (' ',
+           'instruction',
            'IPC',
            '',
            'rel',
            'CPI',
            '',
            'rel'))
-    print("---------------------------------+---------------------------------------------------------")
+    print("------------------------------------------+---------------------------------------------------------")
 
     l_list = list(l_list.keys())
     t_list = list(t_list.keys())
@@ -124,19 +126,20 @@ def main():
         if i in r.latency:
             r_row = r.latency[i]
 
-        dump_row(l_row, r_row, i)
+        dump_row(l_row, r_row, i[0], i[1])
 
     print("\n")
-    print("==== THROUGHPUT ===========================================================================")
-    print("%32s | %7s%8s (%6s[%%]), %7s%8s (%6s[%%])"%
-          ('instruction',
+    print("============= THROUGHPUT ===========================================================================")
+    print("%8s %32s | %7s%8s (%6s[%%]), %7s%8s (%6s[%%])"%
+          (' ',
+           'instruction',
            'IPC',
            '',
            'rel',
            'CPI',
            '',
            'rel'))
-    print("---------------------------------+---------------------------------------------------------")
+    print("------------------------------------------+---------------------------------------------------------")
     for i in t_list:
         l_row = None
         r_row = None
@@ -146,7 +149,7 @@ def main():
         if i in r.throughput:
             r_row = r.throughput[i]
 
-        dump_row(l_row, r_row, i)
+        dump_row(l_row, r_row, i[0], i[1])
 
     
 

@@ -146,5 +146,5 @@ class,inst,l/t,cpi,ipc
 "m128","aesdec","throughput","5.116995e-01","1.954272e+00"
 "m128","aesdeclast","latency","4.000398e+00","2.499751e-01"
 "m128","aesdeclast","throughput","5.000301e-01","1.999880e+00"
-"m128","plcmulqdq","latency","4.500374e+00","2.222037e-01"
-"m128","plcmulqdq","throughput","2.000182e+00","4.999545e-01"
+"m128","pclmulqdq","latency","4.500374e+00","2.222037e-01"
+"m128","pclmulqdq","throughput","2.000182e+00","4.999545e-01"
