@@ -24,22 +24,25 @@ test_avx()
                     (g->vmovdqu(dst, g->ptr[g->rdx + g->rdi + (2048*1024-1)])); (g->movq(g->rdi, dst)); ,
                     false, OT_FP32);
 
-        GEN(Ymm, "xorps", (g->vxorps(dst, dst, src)), false, OT_FP32);
-        GEN(Ymm, "mulps", (g->vmulps(dst, dst, src)), false, OT_FP32);
-        GEN(Ymm, "addps", (g->vaddps(dst, dst, src)), false, OT_FP32);
-        GEN(Ymm, "divps", (g->vdivps(dst, dst, src)), false, OT_FP32);
-        GEN(Ymm, "divpd", (g->vdivpd(dst, dst, src)), false, OT_FP64);
-        GEN(Ymm, "rsqrtps", (g->vrsqrtps(dst, dst)), false, OT_FP32);
-        GEN(Ymm, "rcpps", (g->vrcpps(dst, dst)), false, OT_FP32);
-        GEN(Ymm, "sqrtps", (g->vsqrtps(dst, dst)), false, OT_FP32);
+        GEN(Ymm, "vxorps", (g->vxorps(dst, dst, src)), false, OT_FP32);
+        GEN(Ymm, "vmulps", (g->vmulps(dst, dst, src)), false, OT_FP32);
+        GEN(Ymm, "vaddps", (g->vaddps(dst, dst, src)), false, OT_FP32);
+        GEN(Ymm, "vdivps", (g->vdivps(dst, dst, src)), false, OT_FP32);
+        GEN(Ymm, "vdivpd", (g->vdivpd(dst, dst, src)), false, OT_FP64);
+        GEN(Ymm, "vrsqrtps", (g->vrsqrtps(dst, dst)), false, OT_FP32);
+        GEN(Ymm, "vrcpps", (g->vrcpps(dst, dst)), false, OT_FP32);
+        GEN(Ymm, "vsqrtps", (g->vsqrtps(dst, dst)), false, OT_FP32);
         GEN(Ymm, "vperm2f128", (g->vperm2f128(dst,dst,src,0)), false, OT_FP32);
     }
 
     if (info.have_avx2) {
-        GEN(Ymm, "pxor", (g->vpxor(dst, dst, src)), false, OT_INT);
-        GEN(Ymm, "paddd", (g->vpaddd(dst, dst, src)), false, OT_INT);
+        GEN(Ymm, "vpxor", (g->vpxor(dst, dst, src)), false, OT_INT);
+        GEN(Ymm, "vpaddd", (g->vpaddd(dst, dst, src)), false, OT_INT);
         GEN(Ymm, "vpermps", (g->vpermps(dst, dst, src)), false, OT_FP32);
         GEN(Ymm, "vpermpd", (g->vpermpd(dst, dst, 0)), false, OT_FP64);
+        GEN(Ymm, "vpblendvb", (g->vpblendvb(dst, src, src, src)), false, OT_INT);
+        GEN_throughput_only(Ymm, "vpmovmskb", (g->vpmovmskb(g->edx,g->ymm0)), false, OT_INT);
+
 
         GEN_latency(Ymm, "vpmovsxwd",
                     (g->vpmovsxwd(g->ymm1,g->xmm0)),

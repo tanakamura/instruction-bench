@@ -12,6 +12,7 @@ struct cpuinfo {
     bool have_avx512er = false;
     bool have_popcnt = false;
     bool have_aes = false;
+    bool have_pclmulqdq = false;
 };
 
 extern cpuinfo info;

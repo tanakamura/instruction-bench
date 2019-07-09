@@ -38,6 +38,14 @@ void test_sse()
     GEN_latency_only(Xmm, "pinsrd->pextr", (g->pinsrb(dst, g->edx, 0));(g->pextrd(g->edx,dst,0)), false, OT_INT);
     GEN(Xmm, "dpps", (g->dpps(dst, src, 0xff)), false, OT_FP32);
     GEN(Xmm, "cvtps2dq", (g->cvtps2dq(dst, src)), false, OT_FP32);
+    GEN_throughput_only(Xmm, "pmovmskb", (g->pmovmskb(g->edx,src)), false, OT_INT);
+    GEN_latency_only(Xmm, "pmovmskb->movq",
+                     (g->pmovmskb(g->edx,src));(g->movq(src,g->rdx)),
+                     false, OT_INT);
+    GEN_latency_only(Xmm, "movq->movq",
+                     (g->movq(g->rdx,src));(g->movq(src,g->rdx)),
+                     false, OT_INT);
+
 
     GEN_latency(Xmm, "movaps [mem]",
                 (g->movaps(dst, g->ptr[g->rdx])),

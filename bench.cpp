@@ -162,6 +162,10 @@ main(int argc, char **argv)
 #else
         __cpuid(1, reg[0], reg[1], reg[2], reg[3]);
 #endif
+        if (reg[2] & (1<<1)) {
+            info.have_pclmulqdq = true;
+        }
+
         if (reg[2] & (1<<12)) {
             info.have_fma = true;
         }
@@ -179,6 +183,10 @@ main(int argc, char **argv)
         }
     }
 
+    test_generic();
+    test_sse();
+    test_avx();
+    test_avx512();
 
     if (info.have_popcnt) {
         GEN(Reg64, "popcnt", (g->popcnt(dst, src)), false, OT_INT);
@@ -191,10 +199,10 @@ main(int argc, char **argv)
         GEN(Xmm, "aesdeclast", (g->aesdeclast(dst,src)), false, OT_INT);
     }
 
-    test_generic();
-    test_sse();
-    test_avx();
-    test_avx512();
+    if (info.have_pclmulqdq) {
+        GEN(Xmm, "plcmulqdq", (g->pclmulqdq(dst,src,0)), false, OT_INT);
+    }
+
     test_mpx();
 
     fclose(logs);
