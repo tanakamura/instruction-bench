@@ -5,6 +5,7 @@
 #include <string.h>
 
 struct cpuinfo {
+    bool have_sse42 = false;
     bool have_avx = false;
     bool have_avx2 = false;
     bool have_fma = false;
@@ -335,7 +336,7 @@ template <typename RegType,
 struct Gen
     :public Xbyak::CodeGenerator
 {
-    Gen(F f, int num_loop, int num_insn, enum lt_op o, enum operand_type ot) {
+    Gen(F f, bool reserve_rcx, int num_loop, int num_insn, enum lt_op o, enum operand_type ot) {
         RegMap<RegType> rm;
 
         int reg_size = 64;
@@ -378,8 +379,16 @@ struct Gen
         rm.killdep(this, rm.v14, ot);
         rm.killdep(this, rm.v15, ot);
 
-        mov(rcx, num_loop);
-        mov(rdx, (intptr_t)zero_mem);
+        Xbyak::Reg64 counter_reg = rcx;
+        if (reserve_rcx) {
+            counter_reg = rdx;
+            mov(rcx, 16);
+            mov(rax, 16);
+        } else {
+            mov(rdx, (intptr_t)zero_mem);
+        }
+
+        mov(counter_reg, num_loop);
         mov(ptr[rsp], rdi);
         xor_(rdi, rdi);
 
@@ -451,7 +460,7 @@ struct Gen
             break;
         }
 
-        dec(rcx);
+        dec(counter_reg);
         jnz("@b");
 
         mov(rdi, ptr[rsp]);
@@ -532,13 +541,14 @@ void
 lt(const char *name,
    const char *on,
    F f,
+   bool reserve_rcx,
    int num_loop,
    enum lt_op o,
    enum operand_type ot)
 {
     int num_insn = get_num_insn<RegType>();
 
-    Gen<RegType,F> g(f, num_loop, num_insn, o, ot);
+    Gen<RegType,F> g(f, reserve_rcx, num_loop, num_insn, o, ot);
     typedef void (*func_t)(void);
     func_t exec = (func_t)g.getCode();
 
@@ -589,11 +599,11 @@ template <typename RegType, typename F>
 void
 run(const char *name, F f, bool kill_dep, enum operand_type ot)
 {
-    lt<RegType>(name, "latency", f, NUM_LOOP, LT_LATENCY, ot);
+    lt<RegType>(name, "latency", f, false, NUM_LOOP, LT_LATENCY, ot);
     if (kill_dep) {
-        lt<RegType>(name, "throughput", f, NUM_LOOP, LT_THROUGHPUT_KILLDEP, ot);
+        lt<RegType>(name, "throughput", f, false, NUM_LOOP, LT_THROUGHPUT_KILLDEP, ot);
     } else {
-        lt<RegType>(name, "throughput", f, NUM_LOOP, LT_THROUGHPUT, ot);
+        lt<RegType>(name, "throughput", f, false, NUM_LOOP, LT_THROUGHPUT, ot);
     }
 }
 
@@ -601,30 +611,30 @@ template <typename RegType, typename F_t, typename F_l>
 void
 run_latency(const char *name, F_t f_t, F_l f_l, bool kill_dep, enum operand_type ot)
 {
-    lt<RegType>(name, "latency", f_l, NUM_LOOP, LT_LATENCY, ot);
+    lt<RegType>(name, "latency", f_l, false, NUM_LOOP, LT_LATENCY, ot);
     if (kill_dep) {
-        lt<RegType>(name, "throughput", f_t, NUM_LOOP, LT_THROUGHPUT_KILLDEP, ot);
+        lt<RegType>(name, "throughput", f_t, false, NUM_LOOP, LT_THROUGHPUT_KILLDEP, ot);
     } else {
-        lt<RegType>(name, "throughput", f_t, NUM_LOOP, LT_THROUGHPUT, ot);
+        lt<RegType>(name, "throughput", f_t, false, NUM_LOOP, LT_THROUGHPUT, ot);
     }
 }
 
 template <typename RegType, typename F_l>
 void
-run_latency_only(const char *name, F_l f_l, bool kill_dep, enum operand_type ot)
+run_latency_only(const char *name, F_l f_l, bool kill_dep, bool reserve_rcx, enum operand_type ot)
 {
-    lt<RegType>(name, "latency", f_l, NUM_LOOP, LT_LATENCY, ot);
+    lt<RegType>(name, "latency", f_l, reserve_rcx, NUM_LOOP, LT_LATENCY, ot);
 }
 
 
 template <typename RegType, typename F_t>
 void
-run_throghput_only(const char *name, F_t f_t,bool kill_dep, enum operand_type ot)
+run_throghput_only(const char *name, F_t f_t,bool kill_dep, bool reserve_rcx, enum operand_type ot)
 {
     if (kill_dep) {
-        lt<RegType>(name, "throughput", f_t, NUM_LOOP, LT_THROUGHPUT_KILLDEP, ot);
+        lt<RegType>(name, "throughput", f_t, reserve_rcx, NUM_LOOP, LT_THROUGHPUT_KILLDEP, ot);
     } else {
-        lt<RegType>(name, "throughput", f_t, NUM_LOOP, LT_THROUGHPUT, ot);
+        lt<RegType>(name, "throughput", f_t, reserve_rcx, NUM_LOOP, LT_THROUGHPUT, ot);
     }
 }
 
@@ -647,13 +657,25 @@ run_throghput_only(const char *name, F_t f_t,bool kill_dep, enum operand_type ot
     run_latency_only<Xbyak::rt>(                                             \
     name,                                                           \
     [](Xbyak::CodeGenerator *g, Xbyak::rt dst, Xbyak::rt src){expr_l;}, \
-    kd, ot);
+    kd, false, ot);
+
+#define GEN_latency_only_rcx_clobber(rt, name, expr_l, kd, ot)          \
+    run_latency_only<Xbyak::rt>(                                        \
+    name,                                                           \
+    [](Xbyak::CodeGenerator *g, Xbyak::rt dst, Xbyak::rt src){expr_l;}, \
+    kd, true, ot);
 
 #define GEN_throughput_only(rt, name, expr_t, kd, ot)                   \
     run_throghput_only<Xbyak::rt>(                                      \
     name,                                                               \
     [](Xbyak::CodeGenerator *g, Xbyak::rt dst, Xbyak::rt src){expr_t;}, \
-    kd, ot);
+    kd, false, ot);
+
+#define GEN_throughput_only_rcx_clobber(rt, name, expr_t, kd, ot)       \
+    run_throghput_only<Xbyak::rt>(                                      \
+    name,                                                               \
+    [](Xbyak::CodeGenerator *g, Xbyak::rt dst, Xbyak::rt src){expr_t;}, \
+    kd, true, ot);
         
 
 extern void test_generic();

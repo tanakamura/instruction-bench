@@ -170,6 +170,10 @@ main(int argc, char **argv)
             info.have_fma = true;
         }
 
+        if (reg[2] & (1<<20)) {
+            info.have_sse42 = true;
+        }
+
         if (reg[2] & (1<<28)) {
             info.have_avx = true;
         }

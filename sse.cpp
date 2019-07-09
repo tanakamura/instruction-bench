@@ -66,4 +66,40 @@ void test_sse()
                 (g->movdqu(dst, g->ptr[g->rdx + (2048*1024-1)])),
                 (g->movdqu(dst, g->ptr[g->rdx + g->rdi + (2048*1024-1)])); (g->movq(g->rdi, dst)); ,
                 false, OT_FP32);
+
+    if (info.have_sse42) {
+        GEN_throughput_only_rcx_clobber(Xmm, "pcmpistri",
+                                        (g->pcmpistri(src,src,0)),
+                                        false,OT_INT);
+        GEN_latency_only_rcx_clobber(Xmm, "pcmpistri->movq",
+                                     (g->pcmpistri(src,src,0));
+                                     (g->movq(src,g->rcx));
+                                     ,
+                                     false,OT_INT);
+ 
+        GEN_throughput_only_rcx_clobber(Xmm, "pcmpistrm",
+                                        (g->pcmpistrm(g->xmm1,g->xmm1,0)),
+                                        false,OT_INT);
+
+        GEN_latency_only_rcx_clobber(Xmm, "pcmpistrm",
+                                     (g->pcmpistrm(g->xmm0,g->xmm0,0)),
+                                     false,OT_INT);
+
+        GEN_throughput_only_rcx_clobber(Xmm, "pcmpestri",
+                                        (g->pcmpestri(src,src,0)),
+                                        false,OT_INT);
+        GEN_latency_only_rcx_clobber(Xmm, "pcmpestri->movq",
+                                     (g->pcmpestri(src,src,0));
+                                     (g->movq(src,g->rcx));
+                                     ,
+                                     false,OT_INT);
+ 
+        GEN_throughput_only_rcx_clobber(Xmm, "pcmpestrm",
+                                        (g->pcmpestrm(g->xmm1,g->xmm1,0)),
+                                        false,OT_INT);
+
+        GEN_latency_only_rcx_clobber(Xmm, "pcmpestrm",
+                                     (g->pcmpestrm(g->xmm0,g->xmm0,0)),
+                                     false,OT_INT);
+    }
 }
