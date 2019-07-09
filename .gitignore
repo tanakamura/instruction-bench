@@ -4,3 +4,7 @@ bench.asm
 *.ilk
 *.obj
 *.pdb
+*.d
+*.o
+out.bin
+bench
