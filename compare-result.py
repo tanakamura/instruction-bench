@@ -63,8 +63,8 @@ def dump_row(l_row, r_row, clas, inst):
         ipc_ratio = 'N/A'
         cpi_ratio = 'N/A'
 
-        print("%32s | %7.2f-%-7s (%6s[%%]), %7.2f-%-7s (%6s[%%])"%
-              (inst,
+        print("%8s %32s | %7.2f-%-7s (%6s[%%]), %7.2f-%-7s (%6s[%%])"%
+              (clas, inst,
                l_ipc, r_ipc, ipc_ratio,
                l_cpi, r_cpi, cpi_ratio))
 
@@ -78,8 +78,8 @@ def dump_row(l_row, r_row, clas, inst):
         ipc_ratio = 'N/A'
         cpi_ratio = 'N/A'
 
-        print("%32s | %7s-%-7.2f (%6s[%%]), %7s-%-7.2f (%6s[%%])"%
-              (inst,
+        print("%8s %32s | %7s-%-7.2f (%6s[%%]), %7s-%-7.2f (%6s[%%])"%
+              (clas, inst,
                l_ipc, r_ipc, ipc_ratio,
                l_cpi, r_cpi, cpi_ratio))
         
