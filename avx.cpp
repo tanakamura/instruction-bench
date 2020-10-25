@@ -1,28 +1,43 @@
 #include "common.hpp"
 
+static Xbyak::Xmm
+ymm_to_xmm(Xbyak::Ymm ymm)
+{
+    return Xbyak::Xmm(ymm.getIdx());
+}
+
 void
 test_avx()
 {
+    using namespace Xbyak;
     if (info.have_avx) {
-        GEN_latency(Ymm, "movaps [mem]",
-                    (g->vmovaps(dst, g->ptr[g->rdx])),
-                    (g->vmovaps(dst, g->ptr[g->rdx + g->rdi])); (g->movq(g->rdi, dst)); ,
-                    false, OT_FP32);
+        GEN_throughput_only(Ymm, "movaps [mem]",
+                            (g->vmovaps(dst, g->ptr[g->rdx])),
+                            false, OT_FP32);
+        GEN_latency_only(Ymm, "movaps [mem] -> movq",
+                         (g->vmovaps(dst, g->ptr[g->rdx + g->rdi])); (g->movq(g->rdi, ymm_to_xmm(dst))); ,
+                         false, OT_FP32);
 
-        GEN_latency(Ymm, "vmovdqu [mem+1]",
-                    (g->vmovdqu(dst, g->ptr[g->rdx + 1])),
-                    (g->vmovdqu(dst, g->ptr[g->rdx + g->rdi + 1])); (g->movq(g->rdi, dst)); ,
-                    false, OT_FP32);
+        GEN_throughput_only(Ymm, "vmovdqu [mem+1]",
+                            (g->vmovdqu(dst, g->ptr[g->rdx + 1])),
+                            false, OT_FP32);
+        GEN_latency_only(Ymm, "vmovdqu [mem+1] -> movq",
+                         (g->vmovdqu(dst, g->ptr[g->rdx + g->rdi + 1])); (g->movq(g->rdi, ymm_to_xmm(dst))); ,
+                         false, OT_FP32);
 
-        GEN_latency(Ymm, "vmovdqu [mem+63] (cross cache)",
-                    (g->vmovdqu(dst, g->ptr[g->rdx + 63])),
-                    (g->vmovdqu(dst, g->ptr[g->rdx + g->rdi + 63])); (g->movq(g->rdi, dst)); ,
-                    false, OT_FP32);
+        GEN_throughput_only(Ymm, "vmovdqu [mem+63] (cross cache)",
+                            (g->vmovdqu(dst, g->ptr[g->rdx + 63])),
+                            false, OT_FP32);
+        GEN_latency_only(Ymm, "vmovdqu [mem+63] (cross cache) -> movq",
+                         (g->vmovdqu(dst, g->ptr[g->rdx + g->rdi + 63])); (g->movq(g->rdi, ymm_to_xmm(dst))); ,
+                         false, OT_FP32);
 
-        GEN_latency(Ymm, "vmovdqu [mem+2MB-1] (cross page)",
-                    (g->vmovdqu(dst, g->ptr[g->rdx + (2048*1024-1)])),
-                    (g->vmovdqu(dst, g->ptr[g->rdx + g->rdi + (2048*1024-1)])); (g->movq(g->rdi, dst)); ,
-                    false, OT_FP32);
+        GEN_throughput_only(Ymm, "vmovdqu [mem+2MB-1] (cross page)",
+                            (g->vmovdqu(dst, g->ptr[g->rdx + (2048*1024-1)])),
+                            false, OT_FP32);
+        GEN_latency_only(Ymm, "vmovdqu [mem+2MB-1] (cross page) -> movq",
+                         (g->vmovdqu(dst, g->ptr[g->rdx + g->rdi + (2048*1024-1)])); (g->movq(g->rdi, ymm_to_xmm(dst))); ,
+                         false, OT_FP32);
 
         GEN(Ymm, "vxorps", (g->vxorps(dst, dst, src)), false, OT_FP32);
         GEN(Ymm, "vmulps", (g->vmulps(dst, dst, src)), false, OT_FP32);
