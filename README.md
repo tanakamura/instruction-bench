@@ -3,12 +3,8 @@ Measures latency and throughputh for each instructions.
 
 For precise measuring, running on Linux is strongly recommended.
 
-<pre>
-<code>
      $ make
      $ ./bench
-</code>
-</pre>
 
 # Results
 [Results](logs/linux/)
@@ -18,3 +14,6 @@ For precise measuring, running on Linux is strongly recommended.
 [Ryzen7-3700X](logs/linux/AMDRyzen73700X8-CoreProcessor.csv)
 
 
+## compare result
+
+    $ python compare-result.py <result1.csv> <result2.csv>

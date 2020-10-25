@@ -207,7 +207,5 @@ main(int argc, char **argv)
         GEN(Xmm, "pclmulqdq", (g->pclmulqdq(dst,src,0)), false, OT_INT);
     }
 
-    test_mpx();
-
     fclose(logs);
 }
