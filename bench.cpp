@@ -129,6 +129,10 @@ main(int argc, char **argv)
     }
 
     logs = fopen(path.c_str(), "wb");
+    if (logs == NULL) {
+        perror(path.c_str());
+        return 1;
+    }
     fprintf(logs, 
             "class,inst,l/t,cpi,ipc\n");
 
@@ -170,6 +174,7 @@ main(int argc, char **argv)
             info.have_fma = true;
         }
 
+
         if (reg[2] & (1<<20)) {
             info.have_sse42 = true;
         }
@@ -185,6 +190,21 @@ main(int argc, char **argv)
         if (reg[2] & (1<<25)) {
             info.have_aes = true;
         }
+
+        if (reg[2] & (1<<11)) {
+            info.have_avx512vnni = true;
+        }
+
+#ifdef _WIN32
+        __cpuidex(reg, 7, 1);
+#else
+        __cpuid_count(7, 1, reg[0], reg[1], reg[2], reg[3]);
+#endif
+
+        if (reg[0] & (1<<5)) {
+            info.have_avx512bf16 = true;
+        }
+
     }
 
     test_generic();
