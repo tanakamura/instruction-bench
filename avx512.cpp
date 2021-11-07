@@ -8,6 +8,11 @@ zmm_to_ymm(Xbyak::Zmm zmm)
 
 void test_avx512() {
     if (info.have_avx512f) {
+        GEN(Zmm, "vaddps", (g->vaddps(dst, src, src)), false, OT_FP32);
+        GEN(Zmm, "vaddpd", (g->vaddpd(dst, src, src)), false, OT_FP64);
+        GEN(Zmm, "vorps", (g->vorps(dst, src, src)), false, OT_FP32);
+        GEN(Zmm, "vorpd", (g->vorpd(dst, src, src)), false, OT_FP64);
+        GEN(Zmm, "vorps reg, reg, [mem]", (g->vorps(dst, src, g->ptr[g->rdx])), false, OT_FP32);
         GEN(Zmm, "vfmaps", (g->vfmadd132ps(dst, src, src)), false, OT_FP32);
         GEN(Zmm, "vfmapd", (g->vfmadd132pd(dst, src, src)), false, OT_FP64);
         GEN(Zmm, "vfmaps reg, reg, [mem]", (g->vfmadd132pd(dst, src, g->ptr[g->rdx])), false, OT_FP32);
