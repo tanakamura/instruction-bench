@@ -191,8 +191,10 @@ main(int argc, char **argv)
             info.have_aes = true;
         }
 
-        if (reg[2] & (1<<11)) {
-            info.have_avx512vnni = true;
+        if (info.have_avx512f) {
+            if (reg[2] & (1<<11)) {
+                info.have_avx512vnni = true;
+            }
         }
 
 #ifdef _WIN32
